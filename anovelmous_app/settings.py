@@ -24,9 +24,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', False)
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['.heroku.com', '.anovelmous.com']
-
-APPEND_SLASH = False
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
