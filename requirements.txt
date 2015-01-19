@@ -4,3 +4,4 @@ djangorestframework==3.0.3
 gunicorn==19.1.1
 psycopg2==2.5.4
 PyYAML==3.11
+whitenoise==1.0.6
