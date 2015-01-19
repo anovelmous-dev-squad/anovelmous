@@ -24,7 +24,7 @@ DEBUG = os.environ.get('DEBUG', False)
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.heroku.com', '.anovelmous.com']
 
 
 # Application definition
