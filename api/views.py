@@ -11,7 +11,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 import logging
-logger = logging.getLogger('view_logger')
+logging.basicConfig(filename='api.log', level=logging.DEBUG)
 
 
 class AuthMixin(object):
@@ -55,5 +55,5 @@ class FormattedNovelTokenViewSet(viewsets.ModelViewSet, AuthMixin):
 
 
 def index(request):
-    logger.debug(request.META['HTTP_HOST'])
+    logging.debug('HTTP HOST: {}'.format(request.META['HTTP_HOST']))
     return HttpResponse('Anovelmous')
