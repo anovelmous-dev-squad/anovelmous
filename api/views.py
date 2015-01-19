@@ -55,5 +55,5 @@ class FormattedNovelTokenViewSet(viewsets.ModelViewSet, AuthMixin):
 
 
 def index(request):
-    logging.debug('HTTP HOST: {}'.format(request.META['HTTP_HOST']))
+    print('HTTP HOST: {}'.format(request.META['HTTP_HOST']))
     return HttpResponse('Anovelmous')
