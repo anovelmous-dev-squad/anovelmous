@@ -15,6 +15,7 @@ router.register(r'novel_tokens', views.NovelTokenViewSet)
 router.register(r'formatted_novel_tokens', views.FormattedNovelTokenViewSet)
 
 urlpatterns = [
+    url(r'^$', views.index),
     url(r'^api/', include(router.urls)),
     url(r'^docs/', include('rest_framework_swagger.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

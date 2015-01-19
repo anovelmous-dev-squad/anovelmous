@@ -1,11 +1,17 @@
 from django.contrib.auth.models import User, Group
+from django.http import HttpResponse
+
 from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
+
 from rest_framework import viewsets
 from api.serializers import UserSerializer, GroupSerializer, NovelSerializer, \
     ChapterSerializer, TokenSerializer, NovelTokenSerializer, FormattedNovelTokenSerializer
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+import logging
+logger = logging.getLogger('view_logger')
 
 
 class AuthMixin(object):
@@ -46,3 +52,8 @@ class NovelTokenViewSet(viewsets.ModelViewSet, AuthMixin):
 class FormattedNovelTokenViewSet(viewsets.ModelViewSet, AuthMixin):
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
+
+
+def index(request):
+    logger.debug(request.META['HTTP_HOST'])
+    return HttpResponse('Anovelmous')
