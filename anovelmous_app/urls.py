@@ -2,7 +2,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from api import views
-from rest_framework.authtoken import views as token_views
 
 
 router = routers.DefaultRouter()
@@ -19,6 +18,5 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^docs/', include('rest_framework_swagger.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api-token-auth/', token_views.obtain_auth_token),
     url(r'^admin/', include(admin.site.urls))
 ]
