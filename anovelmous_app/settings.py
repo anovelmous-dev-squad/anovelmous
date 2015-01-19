@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = os.environ.get('TEMPLATE_DEBUG', False)
 
 ALLOWED_HOSTS = ['.heroku.com', '.anovelmous.com']
 
+APPEND_SLASH = False
 
 # Application definition
 
@@ -38,11 +39,14 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
     'api',
 )
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ),
     'PAGINATE_BY': 100
 }
 
