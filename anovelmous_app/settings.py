@@ -26,8 +26,6 @@ TEMPLATE_DEBUG = os.environ.get('TEMPLATE_DEBUG', False)
 
 ALLOWED_HOSTS = []
 
-APPEND_SLASH = False
-
 # Application definition
 
 INSTALLED_APPS = (
