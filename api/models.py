@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
-import string
+from anovelmous_app.formatting import get_formatted_previous_and_current_novel_tokens, is_allowed_punctuation
 
 LONGEST_ENGLISH_WORD_LENGTH = 28
 MAX_PUNCTUATION_LENGTH = 7
@@ -17,6 +17,9 @@ class Novel(TimeStampedModel):
     """
     title = models.CharField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.title
+
 
 class Chapter(TimeStampedModel):
     """
@@ -27,6 +30,9 @@ class Chapter(TimeStampedModel):
 
     class Meta:
         unique_together = ('title', 'novel')
+
+    def __str__(self):
+        return self.title
 
 
 class Token(TimeStampedModel):
@@ -39,7 +45,10 @@ class Token(TimeStampedModel):
 
     def __init__(self, *args, **kwargs):
         super(TimeStampedModel, self).__init__(*args, **kwargs)
-        self.is_punctuation = True if self.content in string.punctuation else False
+        self.is_punctuation = is_allowed_punctuation(self.content)
+
+    def __str__(self):
+        return self.content
 
 
 class AbstractNovelToken(TimeStampedModel):
@@ -56,13 +65,41 @@ class NovelToken(AbstractNovelToken):
     """
     token = models.ForeignKey(Token)
 
+    def save(self, quote_punctuation_direction=None, *args, **kwargs):
+        super(NovelToken, self).save(*args, **kwargs)
+
+        chapter_formatted_tokens = FormattedNovelToken.objects.filter(chapter=self.chapter)
+        prev_formatted_novel_token = chapter_formatted_tokens.order_by('-ordinal').first()
+
+        previous_token, new_token = get_formatted_previous_and_current_novel_tokens(
+            previous_token=str(prev_formatted_novel_token) if prev_formatted_novel_token else '',
+            new_token=str(self),
+            quote_punctuation_direction=quote_punctuation_direction
+        )
+
+        if previous_token:
+            prev_formatted_novel_token.content = previous_token
+            prev_formatted_novel_token.save()
+        if new_token:
+            FormattedNovelToken.objects.create(
+                content=new_token,
+                ordinal=prev_formatted_novel_token.ordinal+1 if prev_formatted_novel_token else 0,
+                chapter=self.chapter
+            )
+
+    def __str__(self):
+        return self.token.content
+
 
 class FormattedNovelToken(AbstractNovelToken):
     """
     A token concatenated with surrounding punctuation. This allows for queries to return a space delimited, formatted
     chapter text.
     """
-    token = models.CharField(max_length=(LONGEST_ENGLISH_WORD_LENGTH+MAX_PUNCTUATION_LENGTH))
+    content = models.CharField(max_length=(LONGEST_ENGLISH_WORD_LENGTH+MAX_PUNCTUATION_LENGTH))
+
+    def __str__(self):
+        return self.content
 
 
 class Vote(TimeStampedModel):

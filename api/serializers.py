@@ -1,7 +1,7 @@
 __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
-from rest_framework import serializers
+from rest_framework import serializers, pagination
 from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
 
 
@@ -17,7 +17,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
-class NovelSerializer(serializers.HyperlinkedModelSerializer):
+class NovelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Novel
         fields = ('title',)
@@ -32,7 +32,7 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Token
-        fields = ('content', 'is_punctuation')
+        fields = ('content',)
 
 
 class NovelTokenSerializer(serializers.HyperlinkedModelSerializer):
