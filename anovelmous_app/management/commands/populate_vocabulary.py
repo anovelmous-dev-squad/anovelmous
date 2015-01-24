@@ -8,6 +8,7 @@ import zipfile
 import random
 import string
 from optparse import make_option
+from anovelmous_app.formatting import is_allowed_punctuation
 
 
 class Command(BaseCommand):
@@ -32,7 +33,7 @@ class Command(BaseCommand):
             vocabulary = vocabulary[:word_cap]
 
         for symbol in string.punctuation:
-            if Token.is_allowed_punctuation(symbol):
+            if is_allowed_punctuation(symbol):
                 vocabulary.append(symbol)
 
         for token in vocabulary:
