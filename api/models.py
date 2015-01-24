@@ -39,7 +39,11 @@ class Token(TimeStampedModel):
 
     def __init__(self, *args, **kwargs):
         super(TimeStampedModel, self).__init__(*args, **kwargs)
-        self.is_punctuation = True if self.content in string.punctuation else False
+        self.is_punctuation = self.is_allowed_punctuation(self.content)
+
+    @classmethod
+    def is_allowed_punctuation(cls, symbol):
+        return symbol in '!"$%&\'(),.:;?'
 
 
 class AbstractNovelToken(TimeStampedModel):
@@ -63,6 +67,7 @@ class FormattedNovelToken(AbstractNovelToken):
     chapter text.
     """
     token = models.CharField(max_length=(LONGEST_ENGLISH_WORD_LENGTH+MAX_PUNCTUATION_LENGTH))
+
 
 
 class Vote(TimeStampedModel):
