@@ -1,8 +1,7 @@
 __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
-from rest_framework import serializers
-from rest_framework.pagination import PaginationSerializer
+from rest_framework import serializers, pagination
 from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
 
 
@@ -18,31 +17,31 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
-class NovelSerializer(serializers.HyperlinkedModelSerializer, PaginationSerializer):
+class NovelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Novel
-        fields = ('title', 'next', 'previous', 'count')
+        fields = ('title',)
 
 
-class ChapterSerializer(serializers.HyperlinkedModelSerializer, PaginationSerializer):
+class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
-        fields = ('title', 'next', 'previous', 'count')
+        fields = ('title',)
 
 
-class TokenSerializer(serializers.HyperlinkedModelSerializer, PaginationSerializer):
+class TokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Token
-        fields = ('content', 'is_punctuation', 'next', 'previous', 'count')
+        fields = ('content',)
 
 
-class NovelTokenSerializer(serializers.HyperlinkedModelSerializer, PaginationSerializer):
+class NovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = NovelToken
-        fields = ('token', 'ordinal', 'chapter', 'next', 'previous', 'count')
+        fields = ('token', 'ordinal', 'chapter')
 
 
-class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer, PaginationSerializer):
+class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormattedNovelToken
-        fields = ('token', 'ordinal', 'chapter', 'next', 'previous', 'count')
+        fields = ('token', 'ordinal', 'chapter')
