@@ -103,3 +103,5 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+SERVER_EMAIL = 'errors@anovelmous.com'
