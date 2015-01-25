@@ -1,14 +1,14 @@
 from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
 
-from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
+from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
 
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from api.serializers import UserSerializer, GroupSerializer, NovelSerializer, \
-    ChapterSerializer, TokenSerializer, NovelTokenSerializer, FormattedNovelTokenSerializer
+    ChapterSerializer, TokenSerializer, FormattedNovelTokenSerializer, VoteSerializer
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -80,6 +80,12 @@ class TokenViewSet(viewsets.GenericViewSet,
 class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
+    max_paginate_by = 100
+
+
+class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+    queryset = Vote.objects.all()
+    serializer_class = VoteSerializer
     max_paginate_by = 100
 
 
