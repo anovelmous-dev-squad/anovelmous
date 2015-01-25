@@ -12,6 +12,7 @@ from api.serializers import UserSerializer, GroupSerializer, NovelSerializer, \
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import mixins
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 
 from django.core.cache import cache
@@ -26,31 +27,41 @@ class AuthMixin(object):
     permission_classes = (IsAuthenticated,)
 
 
-class UserViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class UserViewSet(viewsets.GenericViewSet,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  AuthMixin,
+                  PaginateByMaxMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     max_paginate_by = 50
 
 
-class GroupViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class GroupViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     max_paginate_by = 10
 
 
-class NovelViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = Novel.objects.all()
     serializer_class = NovelSerializer
     max_paginate_by = 100
 
 
-class ChapterViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     max_paginate_by = 100
 
 
-class TokenViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class TokenViewSet(viewsets.GenericViewSet,
+                   mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.CreateModelMixin,
+                   AuthMixin,
+                   PaginateByMaxMixin):
     queryset = Token.objects.all()
     serializer_class = TokenSerializer
     max_paginate_by = 100
@@ -66,13 +77,7 @@ class TokenViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
         return Response(serializer.data)
 
 
-class NovelTokenViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
-    queryset = NovelToken.objects.all()
-    serializer_class = NovelTokenSerializer
-    max_paginate_by = 100
-
-
-class FormattedNovelTokenViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
     max_paginate_by = 100
