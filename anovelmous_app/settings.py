@@ -105,3 +105,6 @@ STATICFILES_DIRS = (
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 SERVER_EMAIL = 'errors@anovelmous.com'
+
+# When deploying to production, set this environment variable to designate where the NLTK data is stored.
+NLTK_DATA_ABS_PATH = os.environ.get('NLTK_DATA_ABS_PATH')

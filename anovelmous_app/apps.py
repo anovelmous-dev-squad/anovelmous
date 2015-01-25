@@ -4,6 +4,7 @@ from django.apps import AppConfig
 from grammar import GrammarFilter
 from api.models import Token
 from django.core.cache import cache
+from .settings import NLTK_DATA_ABS_PATH
 
 
 class APIConfig(AppConfig):
@@ -12,5 +13,5 @@ class APIConfig(AppConfig):
 
     def ready(self):
         full_vocabulary = list(Token.objects.all().values_list('content', flat=True))
-        gf = GrammarFilter(vocabulary=full_vocabulary)
+        gf = GrammarFilter(vocabulary=full_vocabulary, nltk_data_path=NLTK_DATA_ABS_PATH)
         cache.set('grammar_filter', gf)
