@@ -1,8 +1,8 @@
 __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
-from rest_framework import serializers, pagination
-from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
+from rest_framework import serializers
+from api.models import Novel, Chapter, Token, FormattedNovelToken, Vote
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -35,13 +35,13 @@ class TokenSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'content', 'is_punctuation')
 
 
-class NovelTokenSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = NovelToken
-        fields = ('id', 'token', 'ordinal', 'chapter')
-
-
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormattedNovelToken
         fields = ('id', 'token', 'ordinal', 'chapter')
+
+
+class VoteSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Vote
+        fields = ('id', 'token', 'ordinal', 'selected', 'chapter', 'user')
