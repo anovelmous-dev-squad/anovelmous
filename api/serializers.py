@@ -38,7 +38,7 @@ class TokenSerializer(serializers.HyperlinkedModelSerializer):
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormattedNovelToken
-        fields = ('id', 'token', 'ordinal', 'chapter')
+        fields = ('id', 'content', 'ordinal', 'chapter')
 
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
