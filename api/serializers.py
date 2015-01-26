@@ -1,8 +1,8 @@
 __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
-from rest_framework import serializers, pagination
-from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
+from rest_framework import serializers
+from api.models import Novel, Chapter, Token, FormattedNovelToken, Vote
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
