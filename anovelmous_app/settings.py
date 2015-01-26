@@ -46,7 +46,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
-    'PAGINATE_BY': 100
+    'PAGINATE_BY': 100,
+    'PAGINATE_BY_PARAM': 'page_size',
 }
 
 MIDDLEWARE_CLASSES = (
