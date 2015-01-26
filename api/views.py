@@ -36,6 +36,7 @@ class UserViewSet(viewsets.GenericViewSet,
     queryset = User.objects.all()
     serializer_class = UserSerializer
     max_paginate_by = 50
+    filter_fields = ('username',)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
@@ -48,12 +49,14 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     queryset = Novel.objects.all()
     serializer_class = NovelSerializer
     max_paginate_by = 100
+    filter_fields = ('title',)
 
 
 class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     max_paginate_by = 100
+    filter_fields = ('title', 'novel')
 
 
 class TokenViewSet(viewsets.GenericViewSet,
@@ -65,6 +68,7 @@ class TokenViewSet(viewsets.GenericViewSet,
     queryset = Token.objects.all()
     serializer_class = TokenSerializer
     max_paginate_by = 100
+    filter_fields = ('is_punctuation',)
 
     @list_route(methods=['GET'])
     def filter_on_grammar(self, request):
@@ -81,12 +85,14 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
     max_paginate_by = 100
+    filter_fields = ('content', 'chapter')
 
 
 class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
     max_paginate_by = 100
+    filter_fields = ('user', 'chapter', 'selected', 'ordinal')
 
 
 def index(request):

@@ -20,13 +20,13 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class NovelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Novel
-        fields = ('id', 'title',)
+        fields = ('id', 'title')
 
 
 class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
-        fields = ('id', 'title',)
+        fields = ('id', 'title', 'novel')
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
