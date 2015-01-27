@@ -26,7 +26,7 @@ class Chapter(TimeStampedModel):
     A model consisting of many tokens.
     """
     title = models.CharField(max_length=100)
-    novel = models.ForeignKey(Novel)
+    novel = models.ForeignKey(Novel, related_name='chapters')
 
     class Meta:
         unique_together = ('title', 'novel')

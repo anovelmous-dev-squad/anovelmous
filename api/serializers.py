@@ -18,9 +18,15 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NovelSerializer(serializers.ModelSerializer):
+    chapters = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='chapter-detail'
+    )
+
     class Meta:
         model = Novel
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'chapters')
 
 
 class ChapterSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,6 +36,8 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
+    lookup_field = 'content'
+
     class Meta:
         model = Token
         fields = ('id', 'content', 'is_punctuation')
