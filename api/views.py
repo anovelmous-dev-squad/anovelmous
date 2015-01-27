@@ -69,6 +69,7 @@ class TokenViewSet(viewsets.GenericViewSet,
     serializer_class = TokenSerializer
     max_paginate_by = 100
     filter_fields = ('is_punctuation',)
+    lookup_field = 'content'
 
     @list_route(methods=['GET'])
     def filter_on_grammar(self, request):
