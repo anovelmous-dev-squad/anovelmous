@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
 
 admin.register(Novel)
 admin.register(Chapter)

@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
-from anovelmous_app.formatting import get_formatted_previous_and_current_novel_tokens, is_allowed_punctuation
+from django.contrib.auth.models import User
+
+from .formatting import get_formatted_previous_and_current_novel_tokens, is_allowed_punctuation
+
 
 LONGEST_ENGLISH_WORD_LENGTH = 28
 MAX_PUNCTUATION_LENGTH = 7
