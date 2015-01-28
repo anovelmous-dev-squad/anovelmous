@@ -1,14 +1,16 @@
 __author__ = 'Greg Ziegan'
 
-from django.core.management.base import BaseCommand
-from api.models import Token
-import requests
 from io import BytesIO
 import zipfile
 import random
 import string
 from optparse import make_option
-from anovelmous_app.formatting import is_allowed_punctuation
+
+from django.core.management.base import BaseCommand
+import requests
+
+from api.models import Token
+from api.formatting import is_allowed_punctuation
 
 
 class Command(BaseCommand):

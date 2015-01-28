@@ -2,7 +2,7 @@ __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from api.models import Novel, Chapter, Token, FormattedNovelToken, Vote
+from .models import Novel, Chapter, Token, FormattedNovelToken, Vote
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,12 +17,19 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'name')
 
 
+class NovelChapterListingField(serializers.RelatedField):
+    def to_representation(self, value):
+        serializer = ChapterPkAndURLSerializer(value, context=self.context)
+        return serializer.data
+
+
 class NovelSerializer(serializers.ModelSerializer):
-    chapters = serializers.HyperlinkedRelatedField(
+    """chapters = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
         view_name='chapter-detail'
-    )
+    )"""
+    chapters = NovelChapterListingField(read_only=True, many=True)
 
     class Meta:
         model = Novel
@@ -33,6 +40,12 @@ class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
         fields = ('id', 'title', 'novel')
+
+
+class ChapterPkAndURLSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chapter
+        fields = ('id', 'url')
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
