@@ -11,6 +11,7 @@ def get_formatted_previous_and_current_novel_tokens(previous_token, new_token, q
         return None, new_token
 
     append_left = False
+    capitalize = False
     if is_allowed_punctuation(new_token):
         if quote_punctuation_direction != 'RIGHT':
             append_left = True
@@ -18,7 +19,16 @@ def get_formatted_previous_and_current_novel_tokens(previous_token, new_token, q
         if previous_token == '"':
             append_left = True
 
+        if previous_token in '.?!\"':
+            capitalize = True
+
+    updated_previous_token, updated_new_token = None, None
     if append_left:
-        return previous_token + new_token, None
+        updated_previous_token = previous_token + new_token
     else:
-        return previous_token[:], new_token[:]
+        updated_previous_token, updated_new_token = previous_token[:], new_token[:]
+
+    if capitalize:
+        updated_new_token = updated_new_token.capitalize()
+
+    return updated_previous_token, updated_new_token
