@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
-from .serializers import UserSerializer, GroupSerializer, NovelSerializer, \
+from .serializers import UserSerializer, GroupSerializer, NovelSerializer, NovelChapterSerializer, \
     ChapterSerializer, TokenSerializer, FormattedNovelTokenSerializer, VoteSerializer
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -51,6 +51,12 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     max_paginate_by = 100
     filter_fields = ('title',)
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return NovelChapterSerializer
+        else:
+            return NovelSerializer
+
 
 class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = Chapter.objects.all()
@@ -69,7 +75,6 @@ class TokenViewSet(viewsets.GenericViewSet,
     serializer_class = TokenSerializer
     max_paginate_by = 100
     filter_fields = ('is_punctuation',)
-    lookup_field = 'content'
 
     @list_route(methods=['GET'])
     def filter_on_grammar(self, request):
@@ -97,5 +102,4 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
 
 
 def index(request):
-    print('HTTP HOST: {}'.format(request.META['HTTP_HOST']))
     return HttpResponse('Anovelmous')

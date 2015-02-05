@@ -17,52 +17,41 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'name')
 
 
-class NovelChapterListingField(serializers.RelatedField):
-    def to_representation(self, value):
-        serializer = ChapterPkAndURLSerializer(value, context=self.context)
-        return serializer.data
+class NovelSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Novel
+        fields = ('id', 'title', 'is_completed', 'url')
 
 
-class NovelSerializer(serializers.ModelSerializer):
-    """chapters = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='chapter-detail'
-    )"""
-    chapters = NovelChapterListingField(read_only=True, many=True)
+class NovelChapterSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Novel
-        fields = ('id', 'title', 'chapters')
+        fields = ('id', 'title', 'is_completed', 'chapters', 'url')
+        depth = 1
 
 
 class ChapterSerializer(serializers.HyperlinkedModelSerializer):
+    novel_id = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Chapter
-        fields = ('id', 'title', 'novel')
-
-
-class ChapterPkAndURLSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Chapter
-        fields = ('id', 'url')
+        fields = ('id', 'title', 'is_completed', 'novel', 'novel_id', 'url')
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
-    lookup_field = 'content'
-
     class Meta:
         model = Token
-        fields = ('id', 'content', 'is_punctuation')
+        fields = ('id', 'url', 'content', 'is_valid', 'is_punctuation')
 
 
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormattedNovelToken
-        fields = ('id', 'content', 'ordinal', 'chapter')
+        fields = ('id', 'url', 'content', 'ordinal', 'chapter')
 
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
-        fields = ('id', 'token', 'ordinal', 'selected', 'chapter', 'user')
+        fields = ('id', 'url', 'token', 'ordinal', 'selected', 'chapter', 'user')

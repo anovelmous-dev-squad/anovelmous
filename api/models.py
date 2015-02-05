@@ -18,6 +18,7 @@ class Novel(TimeStampedModel):
     A model consisting of chapters of dynamic content.
     """
     title = models.CharField(max_length=100, unique=True)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -29,6 +30,7 @@ class Chapter(TimeStampedModel):
     """
     title = models.CharField(max_length=100)
     novel = models.ForeignKey(Novel, related_name='chapters')
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('title', 'novel')
@@ -44,6 +46,7 @@ class Token(TimeStampedModel):
     """
     content = models.CharField(max_length=LONGEST_ENGLISH_WORD_LENGTH, unique=True)
     is_punctuation = models.BooleanField(default=False)
+    is_valid = models.BooleanField(default=True)
 
     def __init__(self, *args, **kwargs):
         super(TimeStampedModel, self).__init__(*args, **kwargs)
