@@ -46,12 +46,18 @@ class TokenSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
+    chapter_id = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = FormattedNovelToken
-        fields = ('id', 'url', 'content', 'ordinal', 'chapter')
+        fields = ('id', 'url', 'content', 'ordinal', 'chapter', 'chapter_id')
 
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
+    chapter_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    token_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Vote
-        fields = ('id', 'url', 'token', 'ordinal', 'selected', 'chapter', 'user')
+        fields = ('id', 'url', 'token', 'token_id', 'ordinal', 'selected', 'chapter', 'chapter_id', 'user', 'user_id')

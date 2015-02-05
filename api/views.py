@@ -49,7 +49,7 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     queryset = Novel.objects.all()
     serializer_class = NovelSerializer
     max_paginate_by = 100
-    filter_fields = ('title',)
+    filter_fields = ('title', 'is_completed')
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -62,7 +62,7 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     max_paginate_by = 100
-    filter_fields = ('title', 'novel')
+    filter_fields = ('title', 'novel', 'is_completed')
 
 
 class TokenViewSet(viewsets.GenericViewSet,
@@ -74,7 +74,7 @@ class TokenViewSet(viewsets.GenericViewSet,
     queryset = Token.objects.all()
     serializer_class = TokenSerializer
     max_paginate_by = 100
-    filter_fields = ('is_punctuation',)
+    filter_fields = ('is_punctuation', 'is_valid')
 
     @list_route(methods=['GET'])
     def filter_on_grammar(self, request):
