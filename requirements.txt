@@ -5,10 +5,10 @@ django-rest-swagger==0.2.8
 djangorestframework==3.0.3
 djangorestframework-filters==0.2.2
 drf-extensions==0.2.6
-gunicorn==19.1.1
+huey==0.4.7
 nltk==3.0.1
 numpy==1.9.1
 psycopg2==2.5.4
 PyYAML==3.11
+redis==2.10.3
 requests==2.5.1
-whitenoise==1.0.6
