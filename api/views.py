@@ -92,7 +92,7 @@ class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxM
     queryset = NovelToken.objects.all()
     serializer_class = NovelTokenSerializer
     max_paginate_by = 100
-    filter_fields = ('content', 'chapter')
+    filter_fields = ('token', 'chapter')
 
 
 class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):

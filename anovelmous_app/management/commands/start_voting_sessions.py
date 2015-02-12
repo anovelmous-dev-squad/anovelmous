@@ -17,7 +17,10 @@ class Command(NoArgsCommand):
         while True:
             most_recent_chapter = Novel.objects.order_by('-id').first().chapters.last()
             current_novel_token = NovelToken.objects.filter(chapter=most_recent_chapter).last()
-            ordinal = current_novel_token.ordinal + 1
+            if not current_novel_token:
+                ordinal = 1
+            else:
+                ordinal = current_novel_token.ordinal + 1
             self.insert_most_popular_token(most_recent_chapter.id, ordinal)
             sleep(VOTING_PERIOD)
 

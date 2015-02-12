@@ -10,6 +10,7 @@ router.register(r'groups', views.GroupViewSet)
 router.register(r'novels', views.NovelViewSet)
 router.register(r'chapters', views.ChapterViewSet)
 router.register(r'tokens', views.TokenViewSet)
+router.register(r'novel_tokens', views.NovelTokenViewSet)
 router.register(r'formatted_novel_tokens', views.FormattedNovelTokenViewSet)
 router.register(r'votes', views.VoteViewSet)
 
