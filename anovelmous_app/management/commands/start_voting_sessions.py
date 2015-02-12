@@ -18,7 +18,7 @@ class Command(NoArgsCommand):
             self.insert_most_popular_token(most_recent_chapter.id, ordinal)
 
     @staticmethod
-    def insert_most_popular_token(self, chapter_id, ordinal):
+    def insert_most_popular_token(chapter_id, ordinal):
         """
         Will select the most popular, grammatically correct vote during the last 10 seconds.
         """
