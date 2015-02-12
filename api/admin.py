@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
 
-admin.register(Novel)
-admin.register(Chapter)
-admin.register(Token)
-admin.register(NovelToken)
-admin.register(FormattedNovelToken)
+admin.site.register(Novel)
+admin.site.register(Chapter)
+admin.site.register(Token)
+admin.site.register(NovelToken)
+admin.site.register(FormattedNovelToken)
+admin.site.register(Vote)
