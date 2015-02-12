@@ -2,62 +2,65 @@ __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from .models import Novel, Chapter, Token, FormattedNovelToken, Vote
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'url', 'username', 'email', 'groups')
+        fields = ('url', 'username', 'email', 'groups')
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
-        fields = ('id', 'url', 'name')
+        fields = ('url', 'name')
 
 
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Novel
-        fields = ('id', 'title', 'is_completed', 'url')
+        fields = ('url', 'title', 'is_completed')
 
 
 class NovelChapterSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Novel
-        fields = ('id', 'title', 'is_completed', 'chapters', 'url')
+        fields = ('url', 'title', 'is_completed', 'chapters')
         depth = 1
 
 
 class ChapterSerializer(serializers.HyperlinkedModelSerializer):
-    novel_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         model = Chapter
-        fields = ('id', 'title', 'is_completed', 'novel', 'novel_id', 'url')
+        fields = ('url', 'title', 'is_completed', 'novel')
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Token
-        fields = ('id', 'url', 'content', 'is_valid', 'is_punctuation')
+        fields = ('url', 'content', 'is_valid', 'is_punctuation')
+
+
+class NovelTokenSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = NovelToken
+        fields = ('url', 'content', 'ordinal', 'chapter')
 
 
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
-    chapter_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         model = FormattedNovelToken
-        fields = ('id', 'url', 'content', 'ordinal', 'chapter', 'chapter_id')
+        fields = ('url', 'content', 'ordinal', 'chapter')
 
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
-    chapter_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    token_id = serializers.PrimaryKeyRelatedField(read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         model = Vote
-        fields = ('id', 'url', 'token', 'token_id', 'ordinal', 'selected', 'chapter', 'chapter_id', 'user', 'user_id')
+        fields = ('url', 'token', 'ordinal', 'selected', 'chapter', 'user')
+
+
+class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Vote
+        fields = ('url', 'token', 'ordinal', 'chapter', 'user')

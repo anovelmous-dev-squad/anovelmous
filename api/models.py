@@ -62,6 +62,8 @@ class AbstractNovelToken(TimeStampedModel):
 
     class Meta:
         abstract = True
+        unique_together = ('ordinal', 'chapter')
+        ordering = ['ordinal']
 
 
 class NovelToken(AbstractNovelToken):
@@ -117,3 +119,6 @@ class Vote(TimeStampedModel):
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
     user = models.ForeignKey(User)
+
+    class Meta:
+        ordering = ['ordinal']

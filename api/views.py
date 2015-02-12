@@ -8,7 +8,8 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from .serializers import UserSerializer, GroupSerializer, NovelSerializer, NovelChapterSerializer, \
-    ChapterSerializer, TokenSerializer, FormattedNovelTokenSerializer, VoteSerializer
+    ChapterSerializer, TokenSerializer, NovelTokenSerializer, \
+    FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -87,6 +88,13 @@ class TokenViewSet(viewsets.GenericViewSet,
         return Response(serializer.data)
 
 
+class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
+    queryset = NovelToken.objects.all()
+    serializer_class = NovelTokenSerializer
+    max_paginate_by = 100
+    filter_fields = ('content', 'chapter')
+
+
 class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
@@ -99,6 +107,12 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
     serializer_class = VoteSerializer
     max_paginate_by = 100
     filter_fields = ('user', 'chapter', 'selected', 'ordinal')
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return VoteSerializer
+        else:
+            return VoteModifySerializer
 
 
 def index(request):
