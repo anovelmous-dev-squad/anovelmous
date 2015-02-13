@@ -45,7 +45,7 @@ class TokenSerializer(serializers.HyperlinkedModelSerializer):
 class NovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = NovelToken
-        fields = ('url', 'token', 'ordinal', 'chapter')
+        fields = ('url', 'token', 'ordinal', 'chapter', 'created_at')
 
 
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
