@@ -1,5 +1,5 @@
 __author__ = 'Greg Ziegan'
-from api.models import NovelToken, Novel, Token
+from api.models import NovelToken, Novel, Vote
 from time import sleep
 from django.db import connection
 from django.core.management.base import NoArgsCommand
@@ -50,5 +50,8 @@ class Command(NoArgsCommand):
             ordinal=ordinal,
             chapter_id=chapter_id
         )
+
+        Vote.objects.filter(chapter_id=chapter_id, ordinal=ordinal, token_id=most_popular_token_id)\
+            .update(selected=True)
 
         logger.debug("Created new `NovelToken`: {}".format(new_novel_token))
