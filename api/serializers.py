@@ -33,7 +33,7 @@ class NovelChapterSerializer(serializers.HyperlinkedModelSerializer):
 class ChapterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
-        fields = ('url', 'title', 'is_completed', 'novel')
+        fields = ('url', 'title', 'is_completed', 'novel', 'novel_tokens', 'formatted_novel_tokens')
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
