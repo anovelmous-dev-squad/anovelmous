@@ -18,22 +18,29 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Novel
-        fields = ('url', 'title', 'is_completed')
+    chapters = serializers.HyperlinkedIdentityField(view_name='chapter-list', lookup_url_kwarg='novel_pk')
 
-
-class NovelChapterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Novel
         fields = ('url', 'title', 'is_completed', 'chapters')
-        depth = 1
 
 
-class ChapterSerializer(serializers.HyperlinkedModelSerializer):
+class ChapterListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
         fields = ('url', 'title', 'is_completed', 'novel')
+
+
+class ChapterDetailSerializer(serializers.HyperlinkedModelSerializer):
+    novel_tokens = serializers.HyperlinkedIdentityField(view_name='noveltoken-list', lookup_url_kwarg='chapter_pk')
+    formatted_novel_tokens = serializers.HyperlinkedIdentityField(
+        view_name='formattednoveltoken-list',
+        lookup_url_kwarg='chapter_pk'
+    )
+
+    class Meta:
+        model = Chapter
+        fields = ('url', 'title', 'is_completed', 'novel', 'novel_tokens', 'formatted_novel_tokens')
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
@@ -64,3 +71,4 @@ class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
         fields = ('url', 'token', 'ordinal', 'chapter', 'user')
+

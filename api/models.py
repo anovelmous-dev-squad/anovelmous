@@ -70,11 +70,9 @@ class Token(TimeStampedModel):
 
 class AbstractNovelToken(TimeStampedModel):
     ordinal = models.IntegerField()
-    chapter = models.ForeignKey(Chapter)
 
     class Meta:
         abstract = True
-        unique_together = ('ordinal', 'chapter')
         ordering = ['ordinal']
 
 
@@ -83,6 +81,10 @@ class NovelToken(AbstractNovelToken):
     A token tied to a Novel's chapter.
     """
     token = models.ForeignKey(Token)
+    chapter = models.ForeignKey(Chapter, related_name="novel_tokens")
+
+    class Meta:
+        unique_together = ('ordinal', 'chapter')
 
     def save(self, quote_punctuation_direction=None, *args, **kwargs):
         super(NovelToken, self).save(*args, **kwargs)
@@ -116,6 +118,10 @@ class FormattedNovelToken(AbstractNovelToken):
     chapter text.
     """
     content = models.CharField(max_length=(LONGEST_ENGLISH_WORD_LENGTH+MAX_PUNCTUATION_LENGTH))
+    chapter = models.ForeignKey(Chapter, related_name="formatted_novel_tokens")
+
+    class Meta:
+        unique_together = ('ordinal', 'chapter')
 
     def __str__(self):
         return self.content
