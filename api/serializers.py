@@ -24,10 +24,11 @@ class NovelSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NovelChapterSerializer(serializers.HyperlinkedModelSerializer):
+    chapters = serializers.HyperlinkedIdentityField(view_name='chapter-list', lookup_url_kwarg='novel_pk')
+
     class Meta:
         model = Novel
         fields = ('url', 'title', 'is_completed', 'chapters')
-        depth = 1
 
 
 class ChapterSerializer(serializers.HyperlinkedModelSerializer):
@@ -64,3 +65,4 @@ class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
         fields = ('url', 'token', 'ordinal', 'chapter', 'user')
+

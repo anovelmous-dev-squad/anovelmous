@@ -94,6 +94,14 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
     max_paginate_by = 100
     filter_fields = ('title', 'novel', 'is_completed')
 
+    def get_queryset(self):
+        novel_pk = self.kwargs.get('novel_pk')
+        if novel_pk:
+            queryset = Chapter.objects.filter(novel__id=novel_pk)
+        else:
+            queryset = Chapter.objects.all()
+        return queryset
+
 
 class TokenViewSet(viewsets.GenericViewSet,
                    mixins.ListModelMixin,
