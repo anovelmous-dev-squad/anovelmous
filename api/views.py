@@ -7,8 +7,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
-from .serializers import UserSerializer, GroupSerializer, NovelSerializer, NovelChapterSerializer, \
-    ChapterSerializer, TokenSerializer, NovelTokenSerializer, \
+from .serializers import UserSerializer, GroupSerializer, NovelSerializer, \
+    ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
     FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -69,12 +69,6 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     max_paginate_by = 100
     filter_fields = ('title', 'is_completed')
 
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return NovelChapterSerializer
-        else:
-            return NovelSerializer
-
 
 class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     """
@@ -90,17 +84,18 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
 
     """
     queryset = Chapter.objects.all()
-    serializer_class = ChapterSerializer
+    serializer_class = ChapterListSerializer
     max_paginate_by = 100
     filter_fields = ('title', 'novel', 'is_completed')
 
     def get_queryset(self):
-        novel_pk = self.kwargs.get('novel_pk')
-        if novel_pk:
-            queryset = Chapter.objects.filter(novel__id=novel_pk)
+        return get_nested_queryset(self.kwargs, 'novel_pk')
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ChapterDetailSerializer
         else:
-            queryset = Chapter.objects.all()
-        return queryset
+            return ChapterListSerializer
 
 
 class TokenViewSet(viewsets.GenericViewSet,
@@ -185,6 +180,15 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
             return VoteSerializer
         else:
             return VoteModifySerializer
+
+
+def get_nested_queryset(kwargs, nested_lookup_name):
+    novel_pk = kwargs.get(nested_lookup_name)
+    if novel_pk:
+        queryset = Chapter.objects.filter(novel__id=novel_pk)
+    else:
+        queryset = Chapter.objects.all()
+    return queryset
 
 
 def index(request):
