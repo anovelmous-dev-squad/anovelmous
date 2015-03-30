@@ -9,6 +9,7 @@ from .formatting import get_formatted_previous_and_current_novel_tokens, is_allo
 
 LONGEST_ENGLISH_WORD_LENGTH = 28
 MAX_PUNCTUATION_LENGTH = 7
+DEFAULT_VOTING_DURATION = 15
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -28,9 +29,13 @@ class TimeStampedModel(models.Model):
 class Novel(TimeStampedModel):
     """
     A model consisting of chapters of dynamic content.
+
+    The voting duration, represented in seconds, will determine the default voting window between each
+    word added to the novel.
     """
     title = models.CharField(max_length=100, unique=True)
     is_completed = models.BooleanField(default=False)
+    voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
 
     def __str__(self):
         return self.title
@@ -39,10 +44,17 @@ class Novel(TimeStampedModel):
 class Chapter(TimeStampedModel):
     """
     A model consisting of many tokens.
+
+    The voting duration (in seconds) on a `Chapter` will default to the voting duration associated with its `Novel`.
     """
     title = models.CharField(max_length=100)
     novel = models.ForeignKey(Novel, related_name='chapters')
     is_completed = models.BooleanField(default=False)
+    voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
+
+    def save(self, *args, **kwargs):
+        self.voting_duration = self.novel.voting_duration
+        super(Chapter, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ('title', 'novel')
