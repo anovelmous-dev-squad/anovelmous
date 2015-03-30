@@ -89,7 +89,12 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
     filter_fields = ('title', 'novel', 'is_completed')
 
     def get_queryset(self):
-        return get_nested_queryset(self.kwargs, 'novel_pk')
+        novel_pk = self.kwargs.get('novel_pk')
+        if novel_pk:
+            queryset = Chapter.objects.filter(novel__id=novel_pk)
+        else:
+            queryset = Chapter.objects.all()
+        return queryset
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -145,6 +150,14 @@ class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxM
     max_paginate_by = 100
     filter_fields = ('token', 'chapter')
 
+    def get_queryset(self):
+        chapter_pk = self.kwargs.get('chapter_pk')
+        if chapter_pk:
+            queryset = NovelToken.objects.filter(chapter__id=chapter_pk)
+        else:
+            queryset = NovelToken.objects.all()
+        return queryset
+
 
 class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
     """
@@ -158,6 +171,14 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
     serializer_class = FormattedNovelTokenSerializer
     max_paginate_by = 100
     filter_fields = ('content', 'chapter')
+
+    def get_queryset(self):
+        chapter_pk = self.kwargs.get('chapter_pk')
+        if chapter_pk:
+            queryset = FormattedNovelToken.objects.filter(chapter__id=chapter_pk)
+        else:
+            queryset = FormattedNovelToken.objects.all()
+        return queryset
 
 
 class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
@@ -180,15 +201,6 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
             return VoteSerializer
         else:
             return VoteModifySerializer
-
-
-def get_nested_queryset(kwargs, nested_lookup_name):
-    novel_pk = kwargs.get(nested_lookup_name)
-    if novel_pk:
-        queryset = Chapter.objects.filter(novel__id=novel_pk)
-    else:
-        queryset = Chapter.objects.all()
-    return queryset
 
 
 def index(request):
