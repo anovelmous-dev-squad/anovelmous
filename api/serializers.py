@@ -22,13 +22,13 @@ class NovelSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Novel
-        fields = ('url', 'title', 'is_completed', 'chapters', 'created_at')
+        fields = ('url', 'title', 'is_completed', 'chapters', 'voting_duration', 'created_at')
 
 
 class ChapterListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
-        fields = ('url', 'title', 'is_completed', 'novel', 'created_at')
+        fields = ('url', 'title', 'is_completed', 'novel', 'voting_duration', 'created_at')
 
 
 class ChapterDetailSerializer(serializers.HyperlinkedModelSerializer):
