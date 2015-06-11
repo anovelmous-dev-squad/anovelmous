@@ -3,8 +3,9 @@ from django.http import HttpResponse
 
 from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import list_route
+from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
 from .serializers import UserSerializer, GroupSerializer, NovelSerializer, \
@@ -201,6 +202,9 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
             return VoteSerializer
         else:
             return VoteModifySerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 def index(request):
