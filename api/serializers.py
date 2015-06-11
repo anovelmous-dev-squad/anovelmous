@@ -68,7 +68,9 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Vote
-        fields = ('id', 'url', 'token', 'ordinal', 'chapter', 'user')
+        fields = ('id', 'url', 'token', 'ordinal', 'chapter')
+        read_only_fields = ('user',)
 
