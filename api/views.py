@@ -31,6 +31,7 @@ class AuthMixin(object):
 
 class UserViewSet(viewsets.GenericViewSet,
                   mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   AuthMixin,
