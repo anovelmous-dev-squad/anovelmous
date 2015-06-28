@@ -10,6 +10,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('id', 'url', 'username', 'email', 'groups', 'date_joined')
 
+class UserModifySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'url', 'username', 'email', 'groups')
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -68,7 +72,6 @@ class VoteSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Vote
         fields = ('id', 'url', 'token', 'ordinal', 'chapter')

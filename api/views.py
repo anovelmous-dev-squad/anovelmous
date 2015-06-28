@@ -8,7 +8,7 @@ from rest_framework.decorators import list_route
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
 from rest_framework.pagination import PaginationSerializer
-from .serializers import UserSerializer, GroupSerializer, NovelSerializer, \
+from .serializers import UserSerializer, UserModifySerializer, GroupSerializer, NovelSerializer, \
     ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
     FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
 
@@ -47,6 +47,12 @@ class UserViewSet(viewsets.GenericViewSet,
     serializer_class = UserSerializer
     max_paginate_by = 50
     filter_fields = ('username',)
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return UserSerializer
+        else:
+            return UserModifySerializer
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
