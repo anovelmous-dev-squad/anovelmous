@@ -7,7 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import list_route
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
-from rest_framework.pagination import PaginationSerializer
+from rest_framework.pagination import PageNumberPagination
 from .serializers import UserSerializer, UserModifySerializer, GroupSerializer, NovelSerializer, \
     ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
     FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
@@ -138,10 +138,9 @@ class TokenViewSet(viewsets.GenericViewSet,
         gf = cache.get('grammar_filter')
         most_recent_novel_token = NovelToken.objects.last()
         tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_novel_token))
-        paginator = Paginator(tokens, 100)
-        page = paginator.page(request.query_params.get('page', 1))
-        serializer = PaginationSerializer(instance=page, context={'request': request})
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        result_page = paginator.paginate_queryset(tokens, request)
+        return paginator.get_paginated_response(result_page)
 
 
 class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
