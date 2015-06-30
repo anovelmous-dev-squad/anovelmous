@@ -1,9 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token as AuthToken
+
+import uuid
 
 from .formatting import get_formatted_previous_and_current_novel_tokens, is_allowed_punctuation
 
@@ -17,8 +19,22 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         AuthToken.objects.create(user=instance)
 
+class Contributor(User):
+    client_id = models.UUIDField(unique=True, default=uuid.uuid4)
 
-class TimeStampedModel(models.Model):
+
+class Guild(Group):
+    client_id = models.UUIDField(unique=True, default=uuid.uuid4)
+
+
+class ClientIdModel(models.Model):
+    client_id = models.UUIDField(unique=True, default=uuid.uuid4)
+
+    class Meta:
+        abstract = True
+
+
+class TimeStampedModel(ClientIdModel):
     last_modified = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -148,7 +164,7 @@ class Vote(TimeStampedModel):
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
-    user = models.ForeignKey(User)
+    contributor = models.ForeignKey(Contributor)
 
     class Meta:
         ordering = ['ordinal']

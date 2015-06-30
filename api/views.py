@@ -1,14 +1,11 @@
-from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
 
-from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote, Contributor, Guild
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import list_route
-from rest_framework.reverse import reverse
-from rest_framework.response import Response
-from rest_framework.pagination import PaginationSerializer
-from .serializers import UserSerializer, UserModifySerializer, GroupSerializer, NovelSerializer, \
+from rest_framework.pagination import PageNumberPagination
+from .serializers import ContributorSerializer, ContributorModifySerializer, GuildSerializer, NovelSerializer, \
     ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
     FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
 
@@ -18,7 +15,6 @@ from rest_framework import mixins
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 
 from django.core.cache import cache
-from django.core.paginator import Paginator
 
 import logging
 logging.basicConfig(filename='api.log', level=logging.DEBUG)
@@ -29,13 +25,10 @@ class AuthMixin(object):
     permission_classes = (IsAuthenticated,)
 
 
-class UserViewSet(viewsets.GenericViewSet,
-                  mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  AuthMixin,
-                  PaginateByMaxMixin):
+class ContributorViewSet(viewsets.ReadOnlyModelViewSet,
+                         mixins.UpdateModelMixin,
+                         AuthMixin,
+                         PaginateByMaxMixin):
     """
     This endpoint presents the `User` resource.
 
@@ -43,21 +36,25 @@ class UserViewSet(viewsets.GenericViewSet,
     However, any user may view the public information about any other user.
 
     """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 50
     filter_fields = ('username',)
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return UserSerializer
+        if self.action in ['retrieve', 'list']:
+            return ContributorSerializer
         else:
-            return UserModifySerializer
+            return ContributorModifySerializer
 
 
-class GroupViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+class GuildViewSet(viewsets.ReadOnlyModelViewSet,
+                   mixins.UpdateModelMixin,
+                   AuthMixin, PaginateByMaxMixin):
+    queryset = Guild.objects.all()
+    serializer_class = GuildSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 10
 
 
@@ -74,6 +71,7 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     """
     queryset = Novel.objects.all()
     serializer_class = NovelSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('title', 'is_completed')
 
@@ -93,6 +91,7 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
     """
     queryset = Chapter.objects.all()
     serializer_class = ChapterListSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('title', 'novel', 'is_completed')
 
@@ -111,10 +110,8 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
             return ChapterListSerializer
 
 
-class TokenViewSet(viewsets.GenericViewSet,
-                   mixins.ListModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.CreateModelMixin,
+class TokenViewSet(viewsets.ReadOnlyModelViewSet,
+                   mixins.UpdateModelMixin,
                    AuthMixin,
                    PaginateByMaxMixin):
     """
@@ -130,6 +127,7 @@ class TokenViewSet(viewsets.GenericViewSet,
     """
     queryset = Token.objects.all()
     serializer_class = TokenSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('is_punctuation', 'is_valid')
 
@@ -138,10 +136,9 @@ class TokenViewSet(viewsets.GenericViewSet,
         gf = cache.get('grammar_filter')
         most_recent_novel_token = NovelToken.objects.last()
         tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_novel_token))
-        paginator = Paginator(tokens, 100)
-        page = paginator.page(request.query_params.get('page', 1))
-        serializer = PaginationSerializer(instance=page, context={'request': request})
-        return Response(serializer.data)
+        paginator = PageNumberPagination()
+        result_page = paginator.paginate_queryset(tokens, request)
+        return paginator.get_paginated_response(result_page)
 
 
 class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
@@ -155,6 +152,7 @@ class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxM
     """
     queryset = NovelToken.objects.all()
     serializer_class = NovelTokenSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('token', 'chapter')
 
@@ -177,6 +175,7 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
     """
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('content', 'chapter')
 
@@ -189,7 +188,11 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
         return queryset
 
 
-class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class VoteViewSet(viewsets.ReadOnlyModelViewSet,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
+                  AuthMixin,
+                  PaginateByMaxMixin):
     """
     This endpoint presents the `Vote` resource.
 
@@ -201,17 +204,18 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
     """
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('user', 'chapter', 'selected', 'ordinal')
+    filter_fields = ('contributor', 'chapter', 'selected', 'ordinal')
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action in ['retrieve', 'list']:
             return VoteSerializer
         else:
             return VoteModifySerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(contributor=Contributor.objects.get(user_ptr=self.request.user))
 
 
 def index(request):

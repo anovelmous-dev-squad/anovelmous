@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'rest_framework_swagger',
     'rest_framework.authtoken',
     'anovelmous_app',
-    'api',
 )
 
 REST_FRAMEWORK = {
@@ -47,8 +46,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
-    'PAGINATE_BY': 100,
-    'PAGINATE_BY_PARAM': 'page_size',
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.StandardResultsSetPagination',
+    'PAGE_SIZE': 100,
 }
 
 MIDDLEWARE_CLASSES = (

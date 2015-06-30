@@ -10,8 +10,8 @@ class DefaultRouter(rest_framework.routers.DefaultRouter, routers.SimpleRouter):
 
 
 router = DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+router.register(r'contributors', views.ContributorViewSet)
+router.register(r'guilds', views.GuildViewSet)
 router.register(r'novels', views.NovelViewSet)
 router.register(r'chapters', views.ChapterViewSet)
 router.register(r'tokens', views.TokenViewSet)
