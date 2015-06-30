@@ -17,8 +17,9 @@ from rest_framework_extensions.mixins import PaginateByMaxMixin
 from django.core.cache import cache
 
 import logging
-logging.basicConfig(filename='api.log', level=logging.DEBUG)
 
+log = logging.getLogger('logentries')
+log.setLevel(logging.INFO)
 
 class AuthMixin(object):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
