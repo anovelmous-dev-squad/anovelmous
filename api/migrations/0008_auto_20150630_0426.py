@@ -14,12 +14,13 @@ def migrate_default_contributor(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    run_before = migrations.RunPython(migrate_default_contributor)
+
     dependencies = [
         ('api', '0007_contributor_guild'),
     ]
 
     operations = [
-        migrations.RunPython(migrate_default_contributor),
         migrations.RemoveField(
             model_name='vote',
             name='user',
