@@ -2,25 +2,34 @@ __author__ = 'Greg Ziegan'
 
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote, Contributor, Guild
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class ContributorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'url', 'username', 'email', 'groups', 'date_joined')
+        model = Contributor
+        fields = ('client_id', 'url', 'username', 'email', 'date_joined')
+        extra_kwargs = {
+            'url': {'view_name': 'contributor-detail', 'lookup_field': 'client_id'},
+        }
 
 
-class UserModifySerializer(serializers.HyperlinkedModelSerializer):
+class ContributorModifySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'url', 'username', 'email', 'groups')
+        model = Contributor
+        fields = ('client_id', 'url', 'username', 'email')
+        extra_kwargs = {
+            'url': {'view_name': 'contributor-detail', 'lookup_field': 'client_id'},
+        }
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GuildSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Group
-        fields = ('id', 'url', 'name')
+        model = Guild
+        fields = ('client_id', 'url', 'name')
+        extra_kwargs = {
+            'url': {'view_name': 'guild-detail', 'lookup_field': 'client_id'},
+        }
 
 
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
@@ -94,11 +103,12 @@ class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
-        fields = ('client_id', 'url', 'ordinal', 'selected', 'chapter', 'token', 'user', 'created_at')
+        fields = ('client_id', 'url', 'ordinal', 'selected', 'chapter', 'token', 'contributor', 'created_at')
         extra_kwargs = {
             'url': {'view_name': 'vote-detail', 'lookup_field': 'client_id'},
             'chapter': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
-            'token': {'view_name': 'token-detail', 'lookup_field': 'client_id'}
+            'token': {'view_name': 'token-detail', 'lookup_field': 'client_id'},
+            'contributor': {'view_name': 'contributor-detail', 'lookup_field': 'client_id'},
         }
 
 
@@ -106,7 +116,7 @@ class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
         fields = ('client_id', 'url', 'chapter', 'token', 'ordinal')
-        read_only_fields = ('user',)
+        read_only_fields = ('contributor',)
         extra_kwargs = {
             'url': {'view_name': 'vote-detail', 'lookup_field': 'client_id'},
             'chapter': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},

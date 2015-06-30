@@ -1,12 +1,11 @@
-from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
 
-from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote, Contributor, Guild
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
-from .serializers import UserSerializer, UserModifySerializer, GroupSerializer, NovelSerializer, \
+from .serializers import ContributorSerializer, ContributorModifySerializer, GuildSerializer, NovelSerializer, \
     ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
     FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
 
@@ -26,10 +25,10 @@ class AuthMixin(object):
     permission_classes = (IsAuthenticated,)
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet,
-                  mixins.UpdateModelMixin,
-                  AuthMixin,
-                  PaginateByMaxMixin):
+class ContributorViewSet(viewsets.ReadOnlyModelViewSet,
+                         mixins.UpdateModelMixin,
+                         AuthMixin,
+                         PaginateByMaxMixin):
     """
     This endpoint presents the `User` resource.
 
@@ -37,21 +36,25 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet,
     However, any user may view the public information about any other user.
 
     """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 50
     filter_fields = ('username',)
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return UserSerializer
+        if self.action in ['retrieve', 'list']:
+            return ContributorSerializer
         else:
-            return UserModifySerializer
+            return ContributorModifySerializer
 
 
-class GroupViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+class GuildViewSet(viewsets.ReadOnlyModelViewSet,
+                   mixins.UpdateModelMixin,
+                   AuthMixin, PaginateByMaxMixin):
+    queryset = Guild.objects.all()
+    serializer_class = GuildSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 10
 
 
@@ -203,16 +206,16 @@ class VoteViewSet(viewsets.ReadOnlyModelViewSet,
     serializer_class = VoteSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('user', 'chapter', 'selected', 'ordinal')
+    filter_fields = ('contributor', 'chapter', 'selected', 'ordinal')
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action in ['retrieve', 'list']:
             return VoteSerializer
         else:
             return VoteModifySerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(contributor=Contributor.objects.get(user_ptr=self.request.user))
 
 
 def index(request):

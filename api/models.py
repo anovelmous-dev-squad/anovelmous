@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -18,6 +18,13 @@ DEFAULT_VOTING_DURATION = 15
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         AuthToken.objects.create(user=instance)
+
+class Contributor(User):
+    client_id = models.UUIDField(unique=True, default=uuid.uuid4)
+
+
+class Guild(Group):
+    client_id = models.UUIDField(unique=True, default=uuid.uuid4)
 
 
 class ClientIdModel(models.Model):
@@ -157,7 +164,7 @@ class Vote(TimeStampedModel):
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
-    user = models.ForeignKey(User)
+    contributor = models.ForeignKey(Contributor)
 
     class Meta:
         ordering = ['ordinal']
