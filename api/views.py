@@ -74,6 +74,7 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     """
     queryset = Novel.objects.all()
     serializer_class = NovelSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('title', 'is_completed')
 
@@ -93,6 +94,7 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
     """
     queryset = Chapter.objects.all()
     serializer_class = ChapterListSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('title', 'novel', 'is_completed')
 
@@ -130,6 +132,7 @@ class TokenViewSet(viewsets.GenericViewSet,
     """
     queryset = Token.objects.all()
     serializer_class = TokenSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('is_punctuation', 'is_valid')
 
@@ -154,6 +157,7 @@ class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxM
     """
     queryset = NovelToken.objects.all()
     serializer_class = NovelTokenSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('token', 'chapter')
 
@@ -176,6 +180,7 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
     """
     queryset = FormattedNovelToken.objects.all()
     serializer_class = FormattedNovelTokenSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('content', 'chapter')
 
@@ -200,6 +205,7 @@ class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
     """
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+    lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('user', 'chapter', 'selected', 'ordinal')
 

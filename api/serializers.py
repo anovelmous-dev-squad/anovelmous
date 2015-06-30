@@ -8,72 +8,108 @@ from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('client_id', 'url', 'username', 'email', 'groups', 'date_joined')
+        fields = ('id', 'url', 'username', 'email', 'groups', 'date_joined')
+
 
 class UserModifySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('client_id', 'url', 'username', 'email', 'groups')
+        fields = ('id', 'url', 'username', 'email', 'groups')
+
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
-        fields = ('client_id', 'url', 'name')
+        fields = ('id', 'url', 'name')
 
 
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
-    chapters = serializers.HyperlinkedIdentityField(view_name='chapter-list', lookup_url_kwarg='novel_pk')
+    chapters = serializers.HyperlinkedIdentityField(view_name='chapter-list', lookup_url_kwarg='novel_client_id')
 
     class Meta:
         model = Novel
         fields = ('client_id', 'url', 'title', 'is_completed', 'chapters', 'voting_duration', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'novel-detail', 'lookup_field': 'client_id'}
+        }
 
 
 class ChapterListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Chapter
         fields = ('client_id', 'url', 'title', 'is_completed', 'novel', 'voting_duration', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
+            'novel': {'view_name': 'novel-detail', 'lookup_field': 'client_id'}
+        }
 
 
 class ChapterDetailSerializer(serializers.HyperlinkedModelSerializer):
-    novel_tokens = serializers.HyperlinkedIdentityField(view_name='noveltoken-list', lookup_url_kwarg='chapter_pk')
+    novel_tokens = serializers.HyperlinkedIdentityField(view_name='noveltoken-list',
+                                                        lookup_url_kwarg='chapter_client_id')
     formatted_novel_tokens = serializers.HyperlinkedIdentityField(
         view_name='formattednoveltoken-list',
-        lookup_url_kwarg='chapter_pk'
+        lookup_url_kwarg='chapter_client_id'
     )
 
     class Meta:
         model = Chapter
         fields = ('client_id', 'url', 'title', 'is_completed', 'novel', 'novel_tokens', 'formatted_novel_tokens', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
+            'novel': {'view_name': 'novel-detail', 'lookup_field': 'client_id'}
+        }
 
 
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Token
         fields = ('client_id', 'url', 'content', 'is_valid', 'is_punctuation', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'token-detail', 'lookup_field': 'client_id'},
+        }
 
 
 class NovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = NovelToken
-        fields = ('client_id', 'url', 'token', 'ordinal', 'chapter', 'created_at')
+        fields = ('client_id', 'url', 'ordinal', 'chapter', 'token', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'noveltoken-detail', 'lookup_field': 'client_id'},
+            'chapter': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
+            'token': {'view_name': 'token-detail', 'lookup_field': 'client_id'}
+        }
 
 
 class FormattedNovelTokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormattedNovelToken
         fields = ('client_id', 'url', 'content', 'ordinal', 'chapter', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'formattednoveltoken-detail', 'lookup_field': 'client_id'},
+            'chapter': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'}
+        }
 
 
 class VoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
-        fields = ('client_id', 'url', 'token', 'ordinal', 'selected', 'chapter', 'user', 'created_at')
+        fields = ('client_id', 'url', 'ordinal', 'selected', 'chapter', 'token', 'user', 'created_at')
+        extra_kwargs = {
+            'url': {'view_name': 'vote-detail', 'lookup_field': 'client_id'},
+            'chapter': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
+            'token': {'view_name': 'token-detail', 'lookup_field': 'client_id'}
+        }
 
 
 class VoteModifySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
-        fields = ('client_id', 'url', 'token', 'ordinal', 'chapter')
+        fields = ('client_id', 'url', 'chapter', 'token', 'ordinal')
         read_only_fields = ('user',)
+        extra_kwargs = {
+            'url': {'view_name': 'vote-detail', 'lookup_field': 'client_id'},
+            'chapter': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
+            'token': {'view_name': 'token-detail', 'lookup_field': 'client_id'}
+        }
 
