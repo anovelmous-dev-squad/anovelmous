@@ -7,6 +7,8 @@ https://docs.djangoproject.com/en/1.7/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
+from logentries import LogentriesHandler
+import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -76,6 +78,24 @@ DATABASES = {
         'PASSWORD': os.environ['DB_PASSWD'],
         'HOST': os.environ['DB_HOST'],
         'PORT': os.environ['DB_PORT']
+    }
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': {
+        'logentries_handler': {
+            'token': os.environ['LOGGING_HANDLER_TOKEN'],
+            'class': 'logentries.LogentriesHandler'
+        },
+    },
+    'loggers': {
+        'logentries': {
+            'handlers': ['logentries_handler'],
+            'level': 'INFO',
+        },
     }
 }
 
