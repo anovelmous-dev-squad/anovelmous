@@ -5,8 +5,6 @@ from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import list_route
-from rest_framework.reverse import reverse
-from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from .serializers import UserSerializer, UserModifySerializer, GroupSerializer, NovelSerializer, \
     ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
@@ -18,7 +16,6 @@ from rest_framework import mixins
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 
 from django.core.cache import cache
-from django.core.paginator import Paginator
 
 import logging
 logging.basicConfig(filename='api.log', level=logging.DEBUG)
@@ -29,10 +26,7 @@ class AuthMixin(object):
     permission_classes = (IsAuthenticated,)
 
 
-class UserViewSet(viewsets.GenericViewSet,
-                  mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
+class UserViewSet(viewsets.ReadOnlyModelViewSet,
                   mixins.UpdateModelMixin,
                   AuthMixin,
                   PaginateByMaxMixin):
@@ -113,10 +107,8 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
             return ChapterListSerializer
 
 
-class TokenViewSet(viewsets.GenericViewSet,
-                   mixins.ListModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.CreateModelMixin,
+class TokenViewSet(viewsets.ReadOnlyModelViewSet,
+                   mixins.UpdateModelMixin,
                    AuthMixin,
                    PaginateByMaxMixin):
     """
@@ -193,7 +185,11 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
         return queryset
 
 
-class VoteViewSet(viewsets.ModelViewSet, AuthMixin, PaginateByMaxMixin):
+class VoteViewSet(viewsets.ReadOnlyModelViewSet,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
+                  AuthMixin,
+                  PaginateByMaxMixin):
     """
     This endpoint presents the `Vote` resource.
 
