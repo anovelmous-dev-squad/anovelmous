@@ -6,7 +6,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
 from .serializers import ContributorSerializer, ContributorModifySerializer, GuildSerializer, NovelSerializer, \
-    ChapterListSerializer, ChapterDetailSerializer, TokenSerializer, NovelTokenSerializer, \
+    ChapterSerializer, TokenSerializer, NovelTokenSerializer, \
     FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
 
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -91,24 +91,18 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
 
     """
     queryset = Chapter.objects.all()
-    serializer_class = ChapterListSerializer
+    serializer_class = ChapterSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
     filter_fields = ('title', 'novel', 'is_completed')
 
     def get_queryset(self):
-        novel_pk = self.kwargs.get('novel_pk')
-        if novel_pk:
-            queryset = Chapter.objects.filter(novel__id=novel_pk)
+        novel_client_id = self.kwargs.get('novel_client_id')
+        if novel_client_id:
+            queryset = Chapter.objects.filter(novel__client_id=novel_client_id)
         else:
             queryset = Chapter.objects.all()
         return queryset
-
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return ChapterDetailSerializer
-        else:
-            return ChapterListSerializer
 
 
 class TokenViewSet(viewsets.ReadOnlyModelViewSet,
@@ -158,9 +152,9 @@ class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxM
     filter_fields = ('token', 'chapter')
 
     def get_queryset(self):
-        chapter_pk = self.kwargs.get('chapter_pk')
-        if chapter_pk:
-            queryset = NovelToken.objects.filter(chapter__id=chapter_pk)
+        chapter_client_id = self.kwargs.get('chapter_client_id')
+        if chapter_client_id:
+            queryset = NovelToken.objects.filter(chapter__client_id=chapter_client_id)
         else:
             queryset = NovelToken.objects.all()
         return queryset
@@ -181,9 +175,9 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
     filter_fields = ('content', 'chapter')
 
     def get_queryset(self):
-        chapter_pk = self.kwargs.get('chapter_pk')
-        if chapter_pk:
-            queryset = FormattedNovelToken.objects.filter(chapter__id=chapter_pk)
+        chapter_client_id = self.kwargs.get('chapter_client_id')
+        if chapter_client_id:
+            queryset = FormattedNovelToken.objects.filter(chapter__client_id=chapter_client_id)
         else:
             queryset = FormattedNovelToken.objects.all()
         return queryset

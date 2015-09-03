@@ -33,32 +33,31 @@ class GuildSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NovelSerializer(serializers.HyperlinkedModelSerializer):
-    chapters = serializers.HyperlinkedIdentityField(view_name='chapter-list', lookup_url_kwarg='novel_client_id')
+    chapters = serializers.HyperlinkedIdentityField(
+        view_name='chapter-list',
+        lookup_field='client_id',
+        lookup_url_kwarg='novel_client_id'
+    )
 
     class Meta:
         model = Novel
         fields = ('client_id', 'url', 'title', 'is_completed', 'chapters', 'voting_duration', 'created_at')
         extra_kwargs = {
-            'url': {'view_name': 'novel-detail', 'lookup_field': 'client_id'}
+            'url': {'view_name': 'novel-detail', 'lookup_field': 'client_id'},
         }
 
 
-class ChapterListSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Chapter
-        fields = ('client_id', 'url', 'title', 'is_completed', 'novel', 'voting_duration', 'created_at')
-        extra_kwargs = {
-            'url': {'view_name': 'chapter-detail', 'lookup_field': 'client_id'},
-            'novel': {'view_name': 'novel-detail', 'lookup_field': 'client_id'}
-        }
+class ChapterSerializer(serializers.HyperlinkedModelSerializer):
+    novel_tokens = serializers.HyperlinkedIdentityField(
+        view_name='noveltoken-list',
+        lookup_url_kwarg='chapter_client_id',
+        lookup_field='client_id'
+    )
 
-
-class ChapterDetailSerializer(serializers.HyperlinkedModelSerializer):
-    novel_tokens = serializers.HyperlinkedIdentityField(view_name='noveltoken-list',
-                                                        lookup_url_kwarg='chapter_client_id')
     formatted_novel_tokens = serializers.HyperlinkedIdentityField(
         view_name='formattednoveltoken-list',
-        lookup_url_kwarg='chapter_client_id'
+        lookup_url_kwarg='chapter_client_id',
+        lookup_field='client_id'
     )
 
     class Meta:
