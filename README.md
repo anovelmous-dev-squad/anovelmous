@@ -24,6 +24,7 @@ For example: (this app uses postgres)
     
     export DATABASE_URL="postgres://<user>:<password>@<host>:<port>/<database_name>"
     export CORS_WHITELIST="localhost:<other_port_num>,localhost:<again>"
+    export DJANGO_DEBUG=True
 
 Now, it's just typical django application setup:
 

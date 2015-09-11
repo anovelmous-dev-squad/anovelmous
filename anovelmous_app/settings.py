@@ -80,22 +80,23 @@ WSGI_APPLICATION = 'anovelmous_app.wsgi.application'
 import dj_database_url
 DATABASES = {'default': dj_database_url.config()}
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'handlers': {
-        'logentries_handler': {
-            'token': os.environ['LOGGING_HANDLER_TOKEN'],
-            'class': 'logentries.LogentriesHandler'
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'handlers': {
+            'logentries_handler': {
+                'token': os.environ.get('LOGGING_HANDLER_TOKEN', ''),
+                'class': 'logentries.LogentriesHandler'
+            },
         },
-    },
-    'loggers': {
-        'logentries': {
-            'handlers': ['logentries_handler'],
-            'level': 'INFO',
-        },
+        'loggers': {
+            'logentries': {
+                'handlers': ['logentries_handler'],
+                'level': 'INFO',
+            },
+        }
     }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
