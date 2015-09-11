@@ -26,6 +26,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', False)
 
 TEMPLATE_DEBUG = DEBUG
 
+SECURE_SSL_REDIRECT = True
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -51,6 +53,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.StandardResultsSetPagination',
     'PAGE_SIZE': 100,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 MIDDLEWARE_CLASSES = (
@@ -115,6 +118,7 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)
