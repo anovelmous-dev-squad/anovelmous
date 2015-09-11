@@ -1,19 +1,25 @@
 language: python
 
+deploy:
+  provider: heroku
+  api_key:
+    secure: QMlbskVYcqSkmz9vhuvkJi9URO7bHHxfTzwIeUieCKBhaGbtcMNYoGVo5qexK0qijeY+9v6mtykwCY6WTK/fwCKWVC2YIE9/JKCr6uW4sPGlLTXm0qoTRVI0D1IAvagBz1YHLaH+nbwpJC9VJMud6LzPZIcSx4eGD0nu87OGC1U=
+  on:
+    condition: 3.4
+
 addons:
-  postgresql: "9.3"
+  postgresql: '9.3'
 
 python:
-  - "3.4"
+- '3.4'
 
 install:
-  - "pip install -r requirements.txt"
-  - sudo mv nltk_data /usr/share/nltk_data
+- pip install -r requirements.txt
+- sudo mv nltk_data /usr/share/nltk_data
 
 before_script:
-  - psql -c 'create database anovelmous_test;' -U postgres
-  - python manage.py syncdb --noinput
-  - python manage.py migrate
+- psql -c 'create database anovelmous_test;' -U postgres
+- python manage.py syncdb --noinput
+- python manage.py migrate
 
-script:
-  py.test
+script: py.test
