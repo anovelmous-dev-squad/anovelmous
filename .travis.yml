@@ -1,11 +1,17 @@
 language: python
 
+addons:
+  postgresql: "9.3"
+
 python:
   - "3.4"
 
 install:
   - "pip install -r requirements.txt"
   - sudo mv nltk_data /usr/share/nltk_data
+
+before_script:
+  - psql -c 'create database anovelmous_test;' -U postgres
 
 script:
   py.test
