@@ -19,6 +19,5 @@ py==1.4.30
 pytest==2.7.2
 pytest-django==2.8.0
 PyYAML==3.11
-redis==2.10.3
 requests==2.7.0
 whitenoise==1.0.6
