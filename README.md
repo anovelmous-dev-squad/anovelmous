@@ -1,5 +1,7 @@
 # Anovelmous
 
+[![Build Status](https://travis-ci.org/anovelmous-dev-squad/anovelmous.svg?branch=master)](https://travis-ci.org/anovelmous-dev-squad/anovelmous)
+
 Anonymous + Novel. Write together as a community to create a collective narrative.
 
 ## How to play
