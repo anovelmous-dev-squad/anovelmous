@@ -18,15 +18,12 @@ Install the necessary dependencies
     pip install -r requirements.txt
     
 
-Set up your database URI with environment variables (better yet put these in a .env script and source it).
+Set up any necessary development environment variables or configure them in a hidden file like .env
 
-For example,
+For example: (this app uses postgres)
     
-    export DB_USER="john_doe"
-    export DB_PASSWD="password"
-    ...
-    
-Look to the settings file for all the necessary database environment variables.
+    export DATABASE_URL="postgres://<user>:<password>@<host>:<port>/<database_name>"
+    export CORS_WHITELIST="localhost:<other_port_num>,localhost:<again>"
 
 Now, it's just typical django application setup:
 
