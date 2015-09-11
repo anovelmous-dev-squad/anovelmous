@@ -1,20 +1,20 @@
+from django.core.cache import cache
 from django.http import HttpResponse
 
-from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote, Contributor, Guild
-
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ContributorSerializer, ContributorModifySerializer, GuildSerializer, NovelSerializer, \
-    ChapterSerializer, TokenSerializer, NovelTokenSerializer, \
-    FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
-
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 
-from django.core.cache import cache
+from .models import Novel, Chapter, Token, NovelToken, FormattedNovelToken, Vote, Contributor, Guild
+from .serializers import ContributorSerializer, ContributorModifySerializer, GuildSerializer, NovelSerializer, \
+    ChapterSerializer, TokenSerializer, NovelTokenSerializer, \
+    FormattedNovelTokenSerializer, VoteSerializer, VoteModifySerializer
+from .filters import ContributorFilter, NovelFilter, ChapterFilter, TokenFilter, NovelTokenFilter, \
+    FormattedNovelTokenFilter, VoteFilter
 
 import logging
 
@@ -41,7 +41,7 @@ class ContributorViewSet(viewsets.ReadOnlyModelViewSet,
     serializer_class = ContributorSerializer
     lookup_field = 'client_id'
     max_paginate_by = 50
-    filter_fields = ('username',)
+    filter_class = ContributorFilter
 
     def get_serializer_class(self):
         if self.action in ['retrieve', 'list']:
@@ -74,7 +74,7 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin)
     serializer_class = NovelSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('title', 'is_completed')
+    filter_class = NovelFilter
 
 
 class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
@@ -94,7 +94,7 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
     serializer_class = ChapterSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('title', 'novel', 'is_completed')
+    filter_class = ChapterFilter
 
     def get_queryset(self):
         novel_client_id = self.kwargs.get('novel_client_id')
@@ -124,7 +124,7 @@ class TokenViewSet(viewsets.ReadOnlyModelViewSet,
     serializer_class = TokenSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('is_punctuation', 'is_valid')
+    filter_class = TokenFilter
 
     @list_route(methods=['GET'])
     def filter_on_grammar(self, request):
@@ -149,7 +149,7 @@ class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxM
     serializer_class = NovelTokenSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('token', 'chapter')
+    filter_class = NovelTokenFilter
 
     def get_queryset(self):
         chapter_client_id = self.kwargs.get('chapter_client_id')
@@ -172,7 +172,7 @@ class FormattedNovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, Pagin
     serializer_class = FormattedNovelTokenSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('content', 'chapter')
+    filter_class = FormattedNovelTokenFilter
 
     def get_queryset(self):
         chapter_client_id = self.kwargs.get('chapter_client_id')
@@ -201,7 +201,7 @@ class VoteViewSet(viewsets.ReadOnlyModelViewSet,
     serializer_class = VoteSerializer
     lookup_field = 'client_id'
     max_paginate_by = 100
-    filter_fields = ('contributor', 'chapter', 'selected', 'ordinal')
+    filter_class = VoteFilter
 
     def get_serializer_class(self):
         if self.action in ['retrieve', 'list']:
