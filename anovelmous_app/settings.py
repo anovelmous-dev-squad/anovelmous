@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'corsheaders',
     'anovelmous_app',
+    'api',
 )
 
 REST_FRAMEWORK = {

@@ -3,7 +3,7 @@ __author__ = 'Greg Ziegan'
 from django.apps import AppConfig
 from grammar import GrammarFilter
 from django.core.cache import cache
-from .settings import NLTK_DATA_ABS_PATH
+from anovelmous_app.settings import NLTK_DATA_ABS_PATH
 
 class APIConfig(AppConfig):
     name = 'api'
