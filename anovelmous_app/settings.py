@@ -26,7 +26,6 @@ DEBUG = os.environ.get('DJANGO_DEBUG', False)
 
 TEMPLATE_DEBUG = DEBUG
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = ['*']
@@ -78,17 +77,8 @@ WSGI_APPLICATION = 'anovelmous_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['ANOVELMOUS_DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWD'],
-        'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_PORT']
-    }
-}
-
+import dj_database_url
+DATABASES = {'default': dj_database_url.config()}
 
 LOGGING = {
     'version': 1,
