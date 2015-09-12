@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 
 import uuid
 
-from .formatting import get_formatted_previous_and_current_novel_tokens, is_allowed_punctuation
+from .formatting import format_bigram, is_allowed_punctuation
 
 LONGEST_ENGLISH_WORD_LENGTH = 28
 MAX_PUNCTUATION_LENGTH = 7
@@ -114,16 +114,16 @@ class NovelToken(AbstractNovelToken):
     class Meta:
         unique_together = ('ordinal', 'chapter')
 
-    def save(self, quote_punctuation_direction=None, *args, **kwargs):
+    def save(self, append_quotation=False, *args, **kwargs):
         super(NovelToken, self).save(*args, **kwargs)
 
         chapter_formatted_tokens = FormattedNovelToken.objects.filter(chapter=self.chapter)
         prev_formatted_novel_token = chapter_formatted_tokens.order_by('-ordinal').first()
 
-        previous_token, new_token = get_formatted_previous_and_current_novel_tokens(
-            previous_token=str(prev_formatted_novel_token) if prev_formatted_novel_token else '',
-            new_token=str(self),
-            quote_punctuation_direction=quote_punctuation_direction
+        previous_token, new_token = format_bigram(
+            token1=str(prev_formatted_novel_token) if prev_formatted_novel_token else '',
+            token2=str(self),
+            append_quotation=append_quotation
         )
 
         if previous_token:

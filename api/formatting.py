@@ -5,30 +5,27 @@ def is_allowed_punctuation(symbol):
     return symbol in '!"$%&\'(),.:;?'
 
 
-def get_formatted_previous_and_current_novel_tokens(previous_token, new_token, quote_punctuation_direction=None):
+def format_bigram(token1, token2, append_quotation=False):
+    if not token1:
+        return None, token2
 
-    if not previous_token:
-        return None, new_token
+    append, capitalize = False, False
+    if token2 == '\"':
+        if append_quotation:
+            append = True
+    elif token1 in '.?!\"' and not is_allowed_punctuation(token2):
+        capitalize = True
+        append = True
+    elif is_allowed_punctuation(token2):
+        append = True
 
-    append_left = False
-    capitalize = False
-    if is_allowed_punctuation(new_token):
-        if quote_punctuation_direction != 'RIGHT':
-            append_left = True
-    else:
-        if previous_token == '"':
-            append_left = True
-
-        if previous_token in '.?!\"':
-            capitalize = True
-
-    updated_previous_token, updated_new_token = None, None
-    if append_left:
-        updated_previous_token = previous_token + new_token
-    else:
-        updated_previous_token, updated_new_token = previous_token[:], new_token[:]
-
+    formatted_token1, formatted_token2 = None, None
     if capitalize:
-        updated_new_token = updated_new_token.capitalize()
+        token2 = token2.capitalize()
 
-    return updated_previous_token, updated_new_token
+    if append:
+        formatted_token1 = token1 + token2
+    else:
+        formatted_token1, formatted_token2 = token1[:], token2[:]
+
+    return formatted_token1, formatted_token2
