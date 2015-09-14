@@ -14,6 +14,7 @@ class NovelFilter(django_filters.FilterSet):
         model = Novel
         fields = ['title', 'is_completed']
 
+
 class ChapterFilter(django_filters.FilterSet):
     novel = django_filters.CharFilter(name='novel__client_id')
 
@@ -28,20 +29,22 @@ class TokenFilter(django_filters.FilterSet):
         fields = ['is_punctuation', 'is_valid']
 
 
-class NovelTokenFilter(django_filters.FilterSet):
+class AbstractNovelTokenFilter(django_filters.FilterSet):
     chapter = django_filters.CharFilter(name='chapter__client_id')
 
     class Meta:
-        model = NovelToken
+        abstract = True
         fields = ['token', 'chapter']
 
 
-class FormattedNovelTokenFilter(django_filters.FilterSet):
-    chapter = django_filters.CharFilter(name='chapter__client_id')
+class NovelTokenFilter(AbstractNovelTokenFilter):
+    class Meta:
+        model = NovelToken
 
+
+class FormattedNovelTokenFilter(AbstractNovelTokenFilter):
     class Meta:
         model = FormattedNovelToken
-        fields = ['content', 'chapter']
 
 
 class VoteFilter(django_filters.FilterSet):
