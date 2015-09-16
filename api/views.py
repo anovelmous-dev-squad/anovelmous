@@ -25,6 +25,23 @@ class AuthMixin(object):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated,)
 
+class DynamicFieldsViewMixin(object):
+    def get_serializer(self, *args, **kwargs):
+
+        serializer_class = self.get_serializer_class()
+
+        fields = None
+        if self.request.method == 'GET':
+            query_fields = self.request.query_params.get("fields", None)
+
+            if query_fields:
+                fields = tuple(query_fields.split(','))
+
+        kwargs['context'] = self.get_serializer_context()
+        kwargs['fields'] = fields
+
+        return serializer_class(*args, **kwargs)
+
 
 class ContributorViewSet(viewsets.ReadOnlyModelViewSet,
                          mixins.UpdateModelMixin,
@@ -105,7 +122,8 @@ class ChapterViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixi
         return queryset
 
 
-class TokenViewSet(viewsets.ReadOnlyModelViewSet,
+class TokenViewSet(DynamicFieldsViewMixin,
+                   viewsets.ReadOnlyModelViewSet,
                    mixins.UpdateModelMixin,
                    AuthMixin,
                    PaginateByMaxMixin):
