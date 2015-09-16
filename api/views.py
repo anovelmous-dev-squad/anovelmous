@@ -126,14 +126,15 @@ class TokenViewSet(viewsets.ReadOnlyModelViewSet,
     max_paginate_by = 100
     filter_class = TokenFilter
 
-    @list_route(methods=['GET'])
-    def filter_on_grammar(self, request):
-        gf = cache.get('grammar_filter')
-        most_recent_novel_token = NovelToken.objects.last()
-        tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_novel_token))
-        paginator = PageNumberPagination()
-        result_page = paginator.paginate_queryset(tokens, request)
-        return paginator.get_paginated_response(result_page)
+    def get_queryset(self):
+        queryset = Token.objects.all()
+        filter_on_grammar = self.request.query_params.get('filter_on_grammar', False)
+        if filter_on_grammar:
+            gf = cache.get('grammar_filter')
+            most_recent_novel_token = NovelToken.objects.last()
+            tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_novel_token))
+            queryset = queryset.filter(content__in=tokens)
+        return queryset
 
 
 class NovelTokenViewSet(viewsets.ReadOnlyModelViewSet, AuthMixin, PaginateByMaxMixin):
