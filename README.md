@@ -5,9 +5,26 @@
 
 Anonymous + Novel. Write together as a community to create a collective narrative.
 
-## How to play
+## Concept
 
-Every **x** seconds, a voting round ends. During each round, an author may cast a vote for the next word in the novel.
+ - Strangers create a narrative, word-by-word
+ 
+ - Every 10 seconds, contributors vote with an allowed vocabulary for the next word
+ 
+ - Grammar checker enforces readability
+
+Constraints create interesting and creative situations.
+ 
+Constraints are a way to game-ify some aspect of communication.
+ 
+ - Messages... with 140 character limits = Twitter
+ - Photos... purposefully, permanently deleted = Snapchat
+ - Videos... limited to 7 seconds = Vine
+ - Novels.. one word at a time, together = Anovelmous
+
+## So how does it play. Tell me.
+
+Every 10 seconds, a voting round ends. During each round, an author may cast a vote for the next word in the novel.
 However, the author has a limited pool of words, to be expanded by the top contributors.
 If the author's votes are consistently being selected for the novel, he/she will be able to add new words to the vocabulary.
 
