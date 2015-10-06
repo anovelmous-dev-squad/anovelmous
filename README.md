@@ -22,6 +22,23 @@ Constraints are a way to game-ify some aspect of communication.
  - Videos... limited to 7 seconds = Vine
  - Novels.. one word at a time, together = Anovelmous
 
+### Prewriting
+
+Good literature needs prior thought.
+
+It also needs *characters*, *places*, and *plot items*.
+
+Before we start a novel, we need to do the following:
+
+  1. Figure out a vague back-of-book summary
+  2. Craft some characters, places, and plot items
+  3. (Proto) Name it
+
+These steps will happen in sequence, each after a certain amount of time to
+allow for reddit-style voting to occur on contributions.
+
+The word-by-word contribution will begin once the prewriting rounds are completed.
+
 ## So how does it play. Tell me.
 
 Every 10 seconds, a voting round ends. During each round, an author may cast a vote for the next word in the novel.
