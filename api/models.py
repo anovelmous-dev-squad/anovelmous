@@ -168,3 +168,30 @@ class Vote(TimeStampedModel):
 
     class Meta:
         ordering = ['ordinal']
+
+
+class Stage(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=140)
+    ordinal = models.IntegerField
+    duration = models.CharField(max_length=100)
+
+
+class Plot(TimeStampedModel):
+    summary = models.CharField(max_length=3000)
+
+
+class Character(TimeStampedModel):
+    firstName = models.CharField(max_length=25)
+    lastName = models.CharField(max_length=25)
+    bio = models.CharField(max_length=1500)
+
+
+class Place(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=300)
+
+
+class PlotItem(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=300)
