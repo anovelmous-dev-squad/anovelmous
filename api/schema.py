@@ -13,8 +13,25 @@ class Connection(relay.Connection):
         return len(self.get_connection_data())
 
 class Contributor(DjangoNode):
+    votes = relay.ConnectionField(
+        Vote, description="Votes this contributor has cast"
+    )
+    plots = relay.ConnectionField(
+        Plot, description="Plots this contributor has imagined"
+    )
+    places = relay.ConnectionField(
+        Place, description="Places this contributor has imagined"
+    )
+    plot_items = relay.ConnectionField(
+        PlotItem, description="Plot items this contributor has imagined"
+    )
+    characters = relay.ConnectionField(
+        Character, description="Characters this contributor has imagined"
+    )
+
     class Meta:
         model = models.Contributor
+        exclude_fields = ('vote', 'plot', 'place', 'plot_item', 'character')
 
     connection_type = Connection
 
@@ -66,6 +83,12 @@ class PlotItem(DjangoNode):
 
     connection_type = Connection
 
+class Character(DjangoNode):
+    class Meta:
+        model = models.Character
+
+    connection_type = Connection
+
 class Query(graphene.ObjectType):
     contributors = relay.ConnectionField(Contributor)
     novels = relay.ConnectionField(Novel)
@@ -76,6 +99,7 @@ class Query(graphene.ObjectType):
     plots = relay.ConnectionField(Plot)
     places = relay.ConnectionField(Place)
     plot_items = relay.ConnectionField(PlotItem)
+    characters = relay.ConnectionField(Character)
 
     contributor = relay.NodeField(Contributor)
     novel = relay.NodeField(Novel)
@@ -86,6 +110,7 @@ class Query(graphene.ObjectType):
     plot = relay.NodeField(Plot)
     place = relay.NodeField(Place)
     plot_item = relay.NodeField(PlotItem)
+    character = relay.NodeField(Character)
     node = relay.NodeField()
     viewer = graphene.Field('self')
 
@@ -124,6 +149,10 @@ class Query(graphene.ObjectType):
     @resolve_only_args
     def resolve_plot_items(self, **kwargs):
         return models.PlotItem.objects.all()
+
+    @resolve_only_args
+    def resolve_characters(self, **kwargs):
+        return models.Character.objects.all()
 
     def resolve_viewer(self, *args, **kwargs):
         return self

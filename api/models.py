@@ -182,8 +182,8 @@ class Plot(TimeStampedModel):
 
 
 class Character(TimeStampedModel):
-    firstName = models.CharField(max_length=25)
-    lastName = models.CharField(max_length=25)
+    first_name = models.CharField(max_length=25)
+    last_name = models.CharField(max_length=25)
     bio = models.CharField(max_length=1500)
 
 
