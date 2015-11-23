@@ -1,47 +1,70 @@
 import graphene
 from graphene import resolve_only_args, relay
-from graphene.contrib.django import DjangoNode, DjangoConnectionField
+from graphene.contrib.django import DjangoNode
 
 from . import models
 
 schema = graphene.Schema(name='Anovelmous Schema')
 
+class Connection(relay.Connection):
+    total_count = graphene.IntField()
+
+    def resolve_total_count(self, args, info):
+        return len(self.get_connection_data())
 
 class Contributor(DjangoNode):
     class Meta:
         model = models.Contributor
 
+    connection_type = Connection
+
 class Novel(DjangoNode):
     class Meta:
         model = models.Novel
+
+    connection_type = Connection
 
 class Chapter(DjangoNode):
     class Meta:
         model = models.Chapter
 
+    connection_type = Connection
+
 class Token(DjangoNode):
     class Meta:
         model = models.NovelToken
+
+    connection_type = Connection
 
 class Vote(DjangoNode):
     class Meta:
         model = models.Vote
 
+    connection_type = Connection
+
 class Stage(DjangoNode):
     class Meta:
         model = models.Stage
+
+    connection_type = Connection
 
 class Plot(DjangoNode):
     class Meta:
         model = models.Plot
 
+    connection_type = Connection
+
 class Place(DjangoNode):
     class Meta:
         model = models.Place
 
+    connection_type = Connection
+
 class PlotItem(DjangoNode):
     class Meta:
         model = models.PlotItem
+
+    connection_type = Connection
 
 class Query(graphene.ObjectType):
     contributors = relay.ConnectionField(Contributor)
@@ -106,3 +129,10 @@ class Query(graphene.ObjectType):
         return self
 
 schema.query = Query
+
+
+import json
+
+introspection_dict = schema.introspect()
+
+print(json.dumps(introspection_dict))
