@@ -7,7 +7,7 @@ from . import models
 schema = graphene.Schema(name='Anovelmous Schema')
 
 class Connection(relay.Connection):
-    total_count = graphene.IntField()
+    total_count = graphene.Int()
 
     def resolve_total_count(self, args, info):
         return len(self.get_connection_data())
@@ -16,7 +16,6 @@ class Connection(relay.Connection):
 class Token(DjangoNode):
     content = graphene.String()
 
-    @resolve_only_args
     def resolve_content(self, *args):
         return self.instance.token.content
 
@@ -27,7 +26,6 @@ class Token(DjangoNode):
 
 
 class Chapter(DjangoNode):
-    @resolve_only_args
     def resolve_tokens(self, *args):
         return self.instance.tokens.all()
 
@@ -38,7 +36,6 @@ class Chapter(DjangoNode):
 
 
 class Novel(DjangoNode):
-    @resolve_only_args
     def resolve_chapters(self, *args):
         return self.instance.chapters.all()
 
@@ -49,6 +46,11 @@ class Novel(DjangoNode):
 
 
 class Vote(DjangoNode):
+    token = graphene.String()
+
+    def resolve_token(self, *args):
+        return self.instance.token.content
+
     class Meta:
         model = models.Vote
 
