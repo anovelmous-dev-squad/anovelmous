@@ -12,29 +12,6 @@ class Connection(relay.Connection):
     def resolve_total_count(self, args, info):
         return len(self.get_connection_data())
 
-class Contributor(DjangoNode):
-    votes = relay.ConnectionField(
-        Vote, description="Votes this contributor has cast"
-    )
-    plots = relay.ConnectionField(
-        Plot, description="Plots this contributor has imagined"
-    )
-    places = relay.ConnectionField(
-        Place, description="Places this contributor has imagined"
-    )
-    plot_items = relay.ConnectionField(
-        PlotItem, description="Plot items this contributor has imagined"
-    )
-    characters = relay.ConnectionField(
-        Character, description="Characters this contributor has imagined"
-    )
-
-    class Meta:
-        model = models.Contributor
-        exclude_fields = ('vote', 'plot', 'place', 'plot_item', 'character')
-
-    connection_type = Connection
-
 class Novel(DjangoNode):
     class Meta:
         model = models.Novel
@@ -86,6 +63,29 @@ class PlotItem(DjangoNode):
 class Character(DjangoNode):
     class Meta:
         model = models.Character
+
+    connection_type = Connection
+
+class Contributor(DjangoNode):
+    votes = relay.ConnectionField(
+        Vote, description="Votes this contributor has cast"
+    )
+    plots = relay.ConnectionField(
+        Plot, description="Plots this contributor has imagined"
+    )
+    places = relay.ConnectionField(
+        Place, description="Places this contributor has imagined"
+    )
+    plot_items = relay.ConnectionField(
+        PlotItem, description="Plot items this contributor has imagined"
+    )
+    characters = relay.ConnectionField(
+        Character, description="Characters this contributor has imagined"
+    )
+
+    class Meta:
+        model = models.Contributor
+        exclude_fields = ('vote', 'plot', 'place', 'plot_item', 'character')
 
     connection_type = Connection
 
