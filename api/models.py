@@ -109,7 +109,7 @@ class NovelToken(AbstractNovelToken):
     A token tied to a Novel's chapter.
     """
     token = models.ForeignKey(Token)
-    chapter = models.ForeignKey(Chapter, related_name="novel_tokens")
+    chapter = models.ForeignKey(Chapter, related_name="tokens")
 
     class Meta:
         unique_together = ('ordinal', 'chapter')
@@ -164,7 +164,7 @@ class Vote(TimeStampedModel):
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
-    contributor = models.ForeignKey(Contributor)
+    contributor = models.ForeignKey(Contributor, related_name="votes")
 
     class Meta:
         ordering = ['ordinal']
@@ -179,19 +179,23 @@ class Stage(TimeStampedModel):
 
 class Plot(TimeStampedModel):
     summary = models.CharField(max_length=3000)
+    contributor = models.ForeignKey(Contributor, related_name="plots")
 
 
 class Character(TimeStampedModel):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     bio = models.CharField(max_length=1500)
+    contributor = models.ForeignKey(Contributor, related_name="characters")
 
 
 class Place(TimeStampedModel):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=300)
+    contributor = models.ForeignKey(Contributor, related_name="places")
 
 
 class PlotItem(TimeStampedModel):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=300)
+    contributor = models.ForeignKey(Contributor, related_name="plot_items")

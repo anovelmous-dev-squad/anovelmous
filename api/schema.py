@@ -12,23 +12,41 @@ class Connection(relay.Connection):
     def resolve_total_count(self, args, info):
         return len(self.get_connection_data())
 
-class Novel(DjangoNode):
+
+class Token(DjangoNode):
+    content = graphene.String()
+
+    @resolve_only_args
+    def resolve_content(self, *args):
+        return self.instance.token.content
+
     class Meta:
-        model = models.Novel
+        model = models.NovelToken
 
     connection_type = Connection
 
+
 class Chapter(DjangoNode):
+    @resolve_only_args
+    def resolve_tokens(self, *args):
+        return self.instance.tokens.all()
+
     class Meta:
         model = models.Chapter
 
     connection_type = Connection
 
-class Token(DjangoNode):
+
+class Novel(DjangoNode):
+    @resolve_only_args
+    def resolve_chapters(self, *args):
+        return self.instance.chapters.all()
+
     class Meta:
-        model = models.NovelToken
+        model = models.Novel
 
     connection_type = Connection
+
 
 class Vote(DjangoNode):
     class Meta:
@@ -36,11 +54,13 @@ class Vote(DjangoNode):
 
     connection_type = Connection
 
+
 class Stage(DjangoNode):
     class Meta:
         model = models.Stage
 
     connection_type = Connection
+
 
 class Plot(DjangoNode):
     class Meta:
@@ -48,11 +68,13 @@ class Plot(DjangoNode):
 
     connection_type = Connection
 
+
 class Place(DjangoNode):
     class Meta:
         model = models.Place
 
     connection_type = Connection
+
 
 class PlotItem(DjangoNode):
     class Meta:
@@ -60,34 +82,20 @@ class PlotItem(DjangoNode):
 
     connection_type = Connection
 
+
 class Character(DjangoNode):
     class Meta:
         model = models.Character
 
     connection_type = Connection
 
-class Contributor(DjangoNode):
-    votes = relay.ConnectionField(
-        Vote, description="Votes this contributor has cast"
-    )
-    plots = relay.ConnectionField(
-        Plot, description="Plots this contributor has imagined"
-    )
-    places = relay.ConnectionField(
-        Place, description="Places this contributor has imagined"
-    )
-    plot_items = relay.ConnectionField(
-        PlotItem, description="Plot items this contributor has imagined"
-    )
-    characters = relay.ConnectionField(
-        Character, description="Characters this contributor has imagined"
-    )
 
+class Contributor(DjangoNode):
     class Meta:
         model = models.Contributor
-        exclude_fields = ('vote', 'plot', 'place', 'plot_item', 'character')
 
     connection_type = Connection
+
 
 class Query(graphene.ObjectType):
     contributors = relay.ConnectionField(Contributor)
