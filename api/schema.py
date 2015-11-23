@@ -91,6 +91,22 @@ class Character(DjangoNode):
 
 
 class Contributor(DjangoNode):
+
+    def resolve_votes(self, *args):
+        return self.instance.votes.all()
+
+    def resolve_plots(self, *args):
+        return self.instance.plots.all()
+
+    def resolve_places(self, *args):
+        return self.instance.places.all()
+
+    def resolve_plot_items(self, *args):
+        return self.instance.plot_items.all()
+
+    def resolve_characters(self, *args):
+        return self.instance.characters.all()
+
     class Meta:
         model = models.Contributor
 
