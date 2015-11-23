@@ -11,10 +11,10 @@ djangorestframework==3.2.3
 djangorestframework-filters==0.4.0
 drf-extensions==0.2.7
 drf-nested-routers==0.9.0
-graphene==0.1.6.1
-graphql-core==0.4.7b0
+graphene==0.4.2
+graphql-core==0.4.9
+graphql-django-view==1.0.1
 graphql-relay==0.3.3
-graphqllib==0.1a0
 gunicorn==19.1.1
 Logentries==0.7
 Markdown==2.6.2
