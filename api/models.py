@@ -43,6 +43,13 @@ class TimeStampedModel(ClientIdModel):
         abstract = True
 
 
+class Stage(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=140)
+    ordinal = models.IntegerField()
+    duration = models.CharField(max_length=100)
+
+
 class Novel(TimeStampedModel):
     """
     A model consisting of chapters of dynamic content.
@@ -54,6 +61,7 @@ class Novel(TimeStampedModel):
     is_completed = models.BooleanField(default=False)
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
     prev_voting_ended = models.DateTimeField()
+    stage = models.ForeignKey(Stage)
 
     def __str__(self):
         return self.title
@@ -174,13 +182,6 @@ class Vote(TimeStampedModel):
 
     class Meta:
         ordering = ['ordinal']
-
-
-class Stage(TimeStampedModel):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=140)
-    ordinal = models.IntegerField
-    duration = models.CharField(max_length=100)
 
 
 class Plot(TimeStampedModel):
