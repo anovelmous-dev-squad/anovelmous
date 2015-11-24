@@ -36,6 +36,11 @@ class Chapter(DjangoNode):
 
 
 class Novel(DjangoNode):
+    latest_chapter = graphene.Field(Chapter)
+
+    def resolve_latest_chapter(self, *args):
+        return self.instance.chapters.last()
+
     def resolve_chapters(self, *args):
         return self.instance.chapters.all()
 
