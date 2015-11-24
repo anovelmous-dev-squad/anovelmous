@@ -14,12 +14,13 @@ class Connection(relay.Connection):
         return len(self.get_connection_data())
 
 
+class VocabTerm(DjangoNode):
+    class Meta:
+        model = models.Token
+
+    connection_type = Connection
+
 class Token(DjangoNode):
-    content = graphene.String()
-
-    def resolve_content(self, *args):
-        return self.instance.token.content
-
     class Meta:
         model = models.NovelToken
 
@@ -52,11 +53,6 @@ class Novel(DjangoNode):
 
 
 class Vote(DjangoNode):
-    token = graphene.String()
-
-    def resolve_token(self, *args):
-        return self.instance.token.content
-
     class Meta:
         model = models.Vote
 
@@ -123,6 +119,7 @@ class Contributor(DjangoNode):
 
 class Query(graphene.ObjectType):
     contributors = relay.ConnectionField(Contributor)
+    vocabulary = relay.ConnectionField(VocabTerm)
     novels = relay.ConnectionField(Novel)
     chapters = relay.ConnectionField(Chapter)
     tokens = relay.ConnectionField(Token)
@@ -134,6 +131,7 @@ class Query(graphene.ObjectType):
     characters = relay.ConnectionField(Character)
 
     contributor = relay.NodeField(Contributor)
+    vocab_term = relay.NodeField(VocabTerm)
     novel = relay.NodeField(Novel)
     chapter = relay.NodeField(Chapter)
     token = relay.NodeField(Token)
@@ -149,6 +147,10 @@ class Query(graphene.ObjectType):
     @resolve_only_args
     def resolve_contributors(self, **kwargs):
         return models.Contributor.objects.all()
+
+    @resolve_only_args
+    def resolve_vocabulary(self, **kwargs):
+        return models.Token.objects.all()
 
     @resolve_only_args
     def resolve_novels(self, **kwargs):
