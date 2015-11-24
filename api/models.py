@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token as AuthToken
 
+from datetime import datetime
 import uuid
 
 from .formatting import format_bigram, is_allowed_punctuation
@@ -52,6 +53,7 @@ class Novel(TimeStampedModel):
     title = models.CharField(max_length=100, unique=True)
     is_completed = models.BooleanField(default=False)
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
+    prev_voting_ended = models.DateTimeField()
 
     def __str__(self):
         return self.title
@@ -135,6 +137,10 @@ class NovelToken(AbstractNovelToken):
                 ordinal=prev_formatted_novel_token.ordinal+1 if prev_formatted_novel_token else 0,
                 chapter=self.chapter
             )
+
+        novel = self.chapter.novel
+        novel.prev_voting_ended = datetime.now()
+        novel.save()
 
     def __str__(self):
         return self.token.content
