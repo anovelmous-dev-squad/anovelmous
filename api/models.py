@@ -78,6 +78,7 @@ class Chapter(TimeStampedModel):
     """
     title = models.CharField(max_length=100)
     novel = models.ForeignKey(Novel, related_name='chapters')
+    ordinal = models.PositiveSmallIntegerField()
     is_completed = models.BooleanField(default=False)
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
 
@@ -87,6 +88,7 @@ class Chapter(TimeStampedModel):
 
     class Meta:
         unique_together = ('title', 'novel')
+        ordering = ('ordinal',)
 
     def __str__(self):
         return self.title
@@ -126,6 +128,7 @@ class NovelToken(AbstractNovelToken):
 
     class Meta:
         unique_together = ('ordinal', 'chapter')
+        ordering = ('ordinal',)
 
     def save(self, append_quotation=False, *args, **kwargs):
         super(NovelToken, self).save(*args, **kwargs)
