@@ -21,6 +21,6 @@ before_script:
 - psql -c 'create database anovelmous_test;' -U postgres
 - python manage.py syncdb --noinput
 - python manage.py migrate
-- python manage.py loaddata
+- python manage.py loaddata datadump.json
 
 script: py.test
