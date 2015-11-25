@@ -21,6 +21,7 @@ before_script:
 - psql -c 'create database anovelmous_test;' -U postgres
 - python manage.py syncdb --noinput
 - python manage.py migrate
+- python manage.py createsuperuser --noinput --username testadmin --email testadmin@anovelmous.com
 - python manage.py loaddata datadump.json
 
 script: py.test
