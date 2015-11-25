@@ -64,7 +64,7 @@ class Novel(TimeStampedModel):
     is_completed = models.BooleanField(default=False)
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
     prev_voting_ended = models.DateTimeField(auto_now_add=True)
-    stage = models.ForeignKey(Stage)
+    stage = models.ForeignKey(Stage, default=1)
 
     def __str__(self):
         return self.title
