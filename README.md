@@ -34,6 +34,10 @@ Now, it's just typical django application setup:
     python manage.py syncdb
     python manage.py migrate
 
+Create a superuser
+
+    python manage.py createsuperuser
+
 Finally, run a one-off command to populate the db with fixture data.
 
     python manage.py loaddata datadump.json
