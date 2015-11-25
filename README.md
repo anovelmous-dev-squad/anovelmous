@@ -36,7 +36,7 @@ Now, it's just typical django application setup:
 
 Finally, run a one-off command to populate the db with fixture data.
 
-    python manage.py loaddata
+    python manage.py loaddata datadump.json
 
 
 You should now be able to run the app locally for testing and development!
