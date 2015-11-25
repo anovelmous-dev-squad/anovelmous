@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token as AuthToken
 
+from datetime import datetime
 import uuid
 
 from .formatting import format_bigram, is_allowed_punctuation
@@ -42,6 +43,16 @@ class TimeStampedModel(ClientIdModel):
         abstract = True
 
 
+class Stage(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=140)
+    ordinal = models.IntegerField()
+    duration = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Novel(TimeStampedModel):
     """
     A model consisting of chapters of dynamic content.
@@ -52,6 +63,8 @@ class Novel(TimeStampedModel):
     title = models.CharField(max_length=100, unique=True)
     is_completed = models.BooleanField(default=False)
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
+    prev_voting_ended = models.DateTimeField(auto_now_add=True)
+    stage = models.ForeignKey(Stage, default=1)
 
     def __str__(self):
         return self.title
@@ -65,6 +78,7 @@ class Chapter(TimeStampedModel):
     """
     title = models.CharField(max_length=100)
     novel = models.ForeignKey(Novel, related_name='chapters')
+    ordinal = models.PositiveSmallIntegerField()
     is_completed = models.BooleanField(default=False)
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
 
@@ -74,6 +88,7 @@ class Chapter(TimeStampedModel):
 
     class Meta:
         unique_together = ('title', 'novel')
+        ordering = ('ordinal',)
 
     def __str__(self):
         return self.title
@@ -109,10 +124,11 @@ class NovelToken(AbstractNovelToken):
     A token tied to a Novel's chapter.
     """
     token = models.ForeignKey(Token)
-    chapter = models.ForeignKey(Chapter, related_name="novel_tokens")
+    chapter = models.ForeignKey(Chapter, related_name="tokens")
 
     class Meta:
         unique_together = ('ordinal', 'chapter')
+        ordering = ('ordinal',)
 
     def save(self, append_quotation=False, *args, **kwargs):
         super(NovelToken, self).save(*args, **kwargs)
@@ -135,6 +151,10 @@ class NovelToken(AbstractNovelToken):
                 ordinal=prev_formatted_novel_token.ordinal+1 if prev_formatted_novel_token else 0,
                 chapter=self.chapter
             )
+
+        novel = self.chapter.novel
+        novel.prev_voting_ended = datetime.now()
+        novel.save()
 
     def __str__(self):
         return self.token.content
@@ -164,7 +184,47 @@ class Vote(TimeStampedModel):
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
-    contributor = models.ForeignKey(Contributor)
+    contributor = models.ForeignKey(Contributor, related_name="votes")
 
     class Meta:
         ordering = ['ordinal']
+
+
+class Plot(TimeStampedModel):
+    summary = models.CharField(max_length=3000)
+    novel = models.ForeignKey(Novel)
+    contributor = models.ForeignKey(Contributor, related_name="plots")
+
+    def __str__(self):
+        return self.summary[:10] if len(self.summary) > 10 else self.summary
+
+
+class Character(TimeStampedModel):
+    first_name = models.CharField(max_length=25)
+    last_name = models.CharField(max_length=25)
+    bio = models.CharField(max_length=1500)
+    novel = models.ForeignKey(Novel)
+    contributor = models.ForeignKey(Contributor, related_name="characters")
+
+    def __str__(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
+
+class Place(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=300)
+    novel = models.ForeignKey(Novel)
+    contributor = models.ForeignKey(Contributor, related_name="places")
+
+    def __str__(self):
+        return self.name
+
+
+class PlotItem(TimeStampedModel):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=300)
+    novel = models.ForeignKey(Novel)
+    contributor = models.ForeignKey(Contributor, related_name="plot_items")
+
+    def __str__(self):
+        return self.name

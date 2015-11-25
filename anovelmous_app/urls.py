@@ -2,8 +2,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 import rest_framework
 from rest_framework_nested import routers
+from django.views.decorators.csrf import csrf_exempt
 from api import views
 
+from graphene.contrib.django.views import GraphQLView
+from api.schema import schema
 
 class DefaultRouter(rest_framework.routers.DefaultRouter, routers.SimpleRouter):
     pass
@@ -34,5 +37,7 @@ urlpatterns = [
     url(r'^api/', include(chapter_router.urls)),
     url(r'^docs/', include('rest_framework_swagger.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^admin/', include(admin.site.urls))
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^graphql', csrf_exempt(GraphQLView.as_view(schema=schema))),
+    url('^graphiql', include('django_graphiql.urls'))
 ]
