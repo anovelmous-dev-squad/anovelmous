@@ -110,8 +110,8 @@ class Contributor(DjangoNode):
     def resolve_places(self, *args):
         return self.instance.places.all()
 
-    def resolve_plot_items(self, *args):
-        return self.instance.plot_items.all()
+    def resolve_plotitems(self, *args):
+        return self.instance.plotitems.all()
 
     def resolve_characters(self, *args):
         return self.instance.characters.all()

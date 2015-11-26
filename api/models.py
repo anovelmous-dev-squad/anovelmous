@@ -190,41 +190,65 @@ class Vote(TimeStampedModel):
         ordering = ['ordinal']
 
 
-class Plot(TimeStampedModel):
-    summary = models.CharField(max_length=3000)
+class PrewritingItem(TimeStampedModel):
     novel = models.ForeignKey(Novel)
-    contributor = models.ForeignKey(Contributor, related_name="plots")
+    contributor = models.ForeignKey(Contributor, related_name="%(class)ss")
+
+    class Meta:
+        abstract = True
+
+
+class Plot(PrewritingItem):
+    summary = models.CharField(max_length=3000)
 
     def __str__(self):
         return self.summary[:10] if len(self.summary) > 10 else self.summary
 
 
-class Character(TimeStampedModel):
+class Character(PrewritingItem):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     bio = models.CharField(max_length=1500)
-    novel = models.ForeignKey(Novel)
-    contributor = models.ForeignKey(Contributor, related_name="characters")
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
 
-class Place(TimeStampedModel):
+class Place(PrewritingItem):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=300)
-    novel = models.ForeignKey(Novel)
-    contributor = models.ForeignKey(Contributor, related_name="places")
 
     def __str__(self):
         return self.name
 
 
-class PlotItem(TimeStampedModel):
+class PlotItem(PrewritingItem):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=300)
-    novel = models.ForeignKey(Novel)
-    contributor = models.ForeignKey(Contributor, related_name="plot_items")
 
     def __str__(self):
         return self.name
+
+
+class PrewritingVote(TimeStampedModel):
+    score = models.SmallIntegerField()
+    contributor = models.ForeignKey(Contributor)
+
+    class Meta:
+        abstract = True
+
+
+class PlotVote(PrewritingVote):
+    plot = models.ForeignKey(Plot)
+
+
+class CharacterVote(PrewritingVote):
+    character = models.ForeignKey(Character)
+
+
+class PlaceVote(PrewritingVote):
+    place = models.ForeignKey(Place)
+
+
+class PlotItemVote(PrewritingVote):
+    plot_item = models.ForeignKey(PlotItem)
