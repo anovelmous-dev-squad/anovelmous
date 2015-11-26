@@ -53,6 +53,46 @@ class Stage(TimeStampedModel):
         return self.name
 
 
+class PrewritingItem(TimeStampedModel):
+    novel = models.ForeignKey('Novel')
+    contributor = models.ForeignKey(Contributor, related_name="%(class)ss")
+
+    class Meta:
+        abstract = True
+
+
+class Plot(PrewritingItem):
+    summary = models.CharField(max_length=3000)
+
+    def __str__(self):
+        return self.summary[:10] if len(self.summary) > 10 else self.summary
+
+
+class Character(PrewritingItem):
+    first_name = models.CharField(max_length=25)
+    last_name = models.CharField(max_length=25)
+    bio = models.CharField(max_length=1500)
+
+    def __str__(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
+
+class Place(PrewritingItem):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.name
+
+
+class PlotItem(PrewritingItem):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.name
+
+
 class Novel(TimeStampedModel):
     """
     A model consisting of chapters of dynamic content.
@@ -65,6 +105,11 @@ class Novel(TimeStampedModel):
     voting_duration = models.PositiveSmallIntegerField(default=DEFAULT_VOTING_DURATION)
     prev_voting_ended = models.DateTimeField(auto_now_add=True)
     stage = models.ForeignKey(Stage, default=1)
+
+    selected_plot = models.ForeignKey(Plot, null=True, blank=True, related_name="featured_novels_plot")
+    places = models.ManyToManyField(Place, blank=True, related_name="featured_novels_place")
+    characters = models.ManyToManyField(Character, blank=True, related_name="featured_novels_character")
+    plot_items = models.ManyToManyField(PlotItem, blank=True, related_name="featured_novels_plot_item")
 
     def __str__(self):
         return self.title
@@ -188,46 +233,6 @@ class Vote(TimeStampedModel):
 
     class Meta:
         ordering = ['ordinal']
-
-
-class PrewritingItem(TimeStampedModel):
-    novel = models.ForeignKey(Novel)
-    contributor = models.ForeignKey(Contributor, related_name="%(class)ss")
-
-    class Meta:
-        abstract = True
-
-
-class Plot(PrewritingItem):
-    summary = models.CharField(max_length=3000)
-
-    def __str__(self):
-        return self.summary[:10] if len(self.summary) > 10 else self.summary
-
-
-class Character(PrewritingItem):
-    first_name = models.CharField(max_length=25)
-    last_name = models.CharField(max_length=25)
-    bio = models.CharField(max_length=1500)
-
-    def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
-
-
-class Place(PrewritingItem):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=300)
-
-    def __str__(self):
-        return self.name
-
-
-class PlotItem(PrewritingItem):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=300)
-
-    def __str__(self):
-        return self.name
 
 
 class PrewritingVote(TimeStampedModel):
