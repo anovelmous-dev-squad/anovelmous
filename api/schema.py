@@ -28,6 +28,11 @@ class Token(DjangoNode):
 
 
 class Chapter(DjangoNode):
+    vocabulary = relay.ConnectionField(VocabTerm)
+
+    def resolve_vocabulary(self, *args):
+        return models.Token.objects.all() # Eventually add filter based on chapter
+
     def resolve_tokens(self, *args):
         return self.instance.tokens.all()
 
