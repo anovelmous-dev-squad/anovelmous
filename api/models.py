@@ -54,7 +54,7 @@ class Stage(TimeStampedModel):
 
 
 class PrewritingItem(TimeStampedModel):
-    novel = models.ForeignKey('Novel')
+    novel = models.ForeignKey('Novel', related_name="proposed_%(class)ss")
     contributor = models.ForeignKey(Contributor, related_name="%(class)ss")
 
     class Meta:

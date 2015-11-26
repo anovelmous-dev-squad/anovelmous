@@ -20,6 +20,7 @@ class VocabTerm(DjangoNode):
 
     connection_type = Connection
 
+
 class Token(DjangoNode):
     class Meta:
         model = models.NovelToken
@@ -50,6 +51,27 @@ class Novel(DjangoNode):
 
     def resolve_chapters(self, *args):
         return self.instance.chapters.all()
+
+    def resolve_places(self, *args):
+        return self.instance.places.all()
+
+    def resolve_characters(self, *args):
+        return self.instance.characters.all()
+
+    def resolve_plotitems(self, *args):
+        return self.instance.plotitems.all()
+
+    def resolve_proposed_plots(self, *args):
+        return self.instance.proposed_plots.all()
+
+    def resolve_proposed_places(self, *args):
+        return self.instance.proposed_places.all()
+
+    def resolve_proposed_characters(self, *args):
+        return self.instance.proposed_characters.all()
+
+    def resolve_proposed_plotitems(self, *args):
+        return self.instance.proposed_plotitems.all()
 
     class Meta:
         model = models.Novel
@@ -115,6 +137,7 @@ class Contributor(DjangoNode):
 
     def resolve_characters(self, *args):
         return self.instance.characters.all()
+
 
     class Meta:
         model = models.Contributor
