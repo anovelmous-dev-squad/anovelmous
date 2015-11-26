@@ -106,7 +106,7 @@ class Novel(TimeStampedModel):
     prev_voting_ended = models.DateTimeField(auto_now_add=True)
     stage = models.ForeignKey(Stage, default=1)
 
-    selected_plot = models.ForeignKey(Plot, null=True, blank=True, related_name="featured_novels_plot")
+    plot = models.ForeignKey(Plot, null=True, blank=True, related_name="featured_novels_plot")
     places = models.ManyToManyField(Place, blank=True, related_name="featured_novels_place")
     characters = models.ManyToManyField(Character, blank=True, related_name="featured_novels_character")
     plot_items = models.ManyToManyField(PlotItem, blank=True, related_name="featured_novels_plot_item")
