@@ -29,13 +29,14 @@ class Token(DjangoNode):
 
 
 class Chapter(DjangoNode):
-    vocabulary = relay.ConnectionField(VocabTerm)
+    text = graphene.String()
 
-    def resolve_vocabulary(self, *args):
-        return models.Token.objects.all() # Eventually add filter based on chapter
+    def resolve_text(self, *args):
+        return ' '.join(models.FormattedNovelToken.objects.filter(chapter=self.instance).values_list('content', flat=True))
 
     def resolve_tokens(self, *args):
         return self.instance.tokens.all()
+
 
     class Meta:
         model = models.Chapter
@@ -45,6 +46,10 @@ class Chapter(DjangoNode):
 
 class Novel(DjangoNode):
     latest_chapter = graphene.Field(Chapter)
+    vocabulary = relay.ConnectionField(VocabTerm)
+
+    def resolve_vocabulary(self, *args):
+        return models.Token.objects.all() # Eventually add filter based on Novel
 
     def resolve_latest_chapter(self, *args):
         return self.instance.chapters.last()
