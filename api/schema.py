@@ -37,7 +37,6 @@ class Chapter(DjangoNode):
     def resolve_tokens(self, *args):
         return self.instance.tokens.all()
 
-
     class Meta:
         model = models.Chapter
 
@@ -63,8 +62,8 @@ class Novel(DjangoNode):
     def resolve_characters(self, *args):
         return self.instance.characters.all()
 
-    def resolve_plotitems(self, *args):
-        return self.instance.plotitems.all()
+    def resolve_plot_items(self, *args):
+        return self.instance.plot_items.all()
 
     def resolve_proposed_plots(self, *args):
         return self.instance.proposed_plots.all()
