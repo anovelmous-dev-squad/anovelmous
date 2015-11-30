@@ -31,6 +31,7 @@ class Token(DjangoNode):
 
 class Chapter(DjangoNode):
     text = graphene.String()
+    tokens = relay.ConnectionField(Token)
 
     def resolve_text(self, *args):
         return ' '.join(models.FormattedNovelToken.objects.filter(chapter=self.instance).values_list('content', flat=True))
