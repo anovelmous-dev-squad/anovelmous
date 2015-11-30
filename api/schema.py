@@ -260,11 +260,45 @@ class CastVote(relay.ClientIDMutation):
         createArgs = {'ordinal': ordinal, 'chapter': chapter, 'contributor': contributor}
         createArgs[relation_name] = resource
 
-        return models.Vote.objects.create(**createArgs)
+        vote = models.Vote.objects.create(**createArgs)
+        return CastVote(vote=vote)
+
+
+class CreateCharacter(relay.ClientIDMutation):
+    class Input:
+        first_name = graphene.String(required=True)
+        last_name = graphene.String()
+        bio = graphene.String(required=True)
+        novel_id = graphene.String(required=True)
+        contributor_id = graphene.String(required=True)
+
+    character = graphene.Field(Character)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        first_name = input.get('first_name')
+        last_name = input.get('last_name', '')
+        bio = input.get('bio')
+        novel_id = input.get('novel_id')
+        contributor_id = input.get('contributor_id')
+
+        contributor = models.Contributor.objects.get(id=from_global_id(contributor_id).id)
+        novel = models.Novel.objects.get(id=from_global_id(novel_id).id)
+
+        character = models.Character.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            bio=bio,
+            novel=novel,
+            contributor=contributor
+        )
+
+        return CreateCharacter(character=character)
 
 
 class Mutation(graphene.ObjectType):
     cast_vote = graphene.Field(CastVote)
+    create_character = graphene.Field(CreateCharacter)
 
 schema.query = Query
 schema.mutation = Mutation

@@ -74,7 +74,10 @@ class Character(PrewritingItem):
     bio = models.CharField(max_length=1500)
 
     def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.last_name != '':
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name
 
 
 class Place(PrewritingItem):
@@ -246,6 +249,9 @@ class Vote(TimeStampedModel):
 
     class Meta:
         order_with_respect_to = 'chapter'
+
+    def __str__(self):
+        return '{}: {} - {}'.format(self.chapter, self.ordinal, self.selected)
 
 
 class PrewritingVote(TimeStampedModel):
