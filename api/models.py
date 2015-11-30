@@ -168,7 +168,10 @@ class NovelToken(AbstractNovelToken):
     """
     A token tied to a Novel's chapter.
     """
-    token = models.ForeignKey(Token)
+    token = models.ForeignKey(Token, null=True, blank=True)
+    place = models.ForeignKey(Place, null=True, blank=True)
+    character = models.ForeignKey(Character, null=True, blank=True)
+    plot_item = models.ForeignKey(PlotItem, null=True, blank=True)
     chapter = models.ForeignKey(Chapter, related_name="tokens")
 
     class Meta:
@@ -193,7 +196,7 @@ class NovelToken(AbstractNovelToken):
         if new_token:
             FormattedNovelToken.objects.create(
                 content=new_token,
-                ordinal=prev_formatted_novel_token.ordinal+1 if prev_formatted_novel_token else 0,
+                ordinal=prev_formatted_novel_token.ordinal + 1 if prev_formatted_novel_token else 0,
                 chapter=self.chapter
             )
 
@@ -202,7 +205,14 @@ class NovelToken(AbstractNovelToken):
         novel.save()
 
     def __str__(self):
-        return self.token.content
+        if self.token:
+            return str(self.token)
+        elif self.place:
+            return str(self.place)
+        elif self.character:
+            return str(self.character)
+        elif self.plot_item:
+            return str(self.plot_item)
 
 
 class FormattedNovelToken(AbstractNovelToken):
@@ -228,7 +238,7 @@ class Vote(TimeStampedModel):
     token = models.ForeignKey(Token, null=True, blank=True)
     place = models.ForeignKey(Place, null=True, blank=True)
     character = models.ForeignKey(Character, null=True, blank=True)
-    plotItem = models.ForeignKey(PlotItem, null=True, blank=True)
+    plot_item = models.ForeignKey(PlotItem, null=True, blank=True)
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
