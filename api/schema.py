@@ -264,6 +264,32 @@ class CastVote(relay.ClientIDMutation):
         return CastVote(vote=vote)
 
 
+class CreatePlot(relay.ClientIDMutation):
+    class Input:
+        summary = graphene.String(required=True)
+        novel_id = graphene.String(required=True)
+        contributor_id = graphene.String(required=True)
+
+    plot = graphene.Field(Plot)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        summary = input.get('summary')
+        novel_id = input.get('novel_id')
+        contributor_id = input.get('contributor_id')
+
+        contributor = models.Contributor.objects.get(id=from_global_id(contributor_id).id)
+        novel = models.Novel.objects.get(id=from_global_id(novel_id).id)
+
+        plot = models.Plot.objects.create(
+            summary=summary,
+            novel=novel,
+            contributor=contributor
+        )
+
+        return CreatePlot(plot=plot)
+
+
 class CreateCharacter(relay.ClientIDMutation):
     class Input:
         first_name = graphene.String(required=True)
@@ -294,6 +320,7 @@ class CreateCharacter(relay.ClientIDMutation):
         )
 
         return CreateCharacter(character=character)
+
 
 class CreatePlace(relay.ClientIDMutation):
     class Input:
@@ -355,6 +382,7 @@ class CreatePlotItem(relay.ClientIDMutation):
 
 class Mutation(graphene.ObjectType):
     cast_vote = graphene.Field(CastVote)
+    create_plot = graphene.Field(CreatePlot)
     create_character = graphene.Field(CreateCharacter)
     create_place = graphene.Field(CreatePlace)
     create_plot_item = graphene.Field(CreatePlotItem)
