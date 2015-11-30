@@ -225,14 +225,17 @@ class Vote(TimeStampedModel):
     A model used to cast a vote for a new NovelToken. The most popular vote during the voting window will determine the
     next NovelToken.
     """
-    token = models.ForeignKey(Token)
+    token = models.ForeignKey(Token, null=True, blank=True)
+    place = models.ForeignKey(Place, null=True, blank=True)
+    character = models.ForeignKey(Character, null=True, blank=True)
+    plotItem = models.ForeignKey(PlotItem, null=True, blank=True)
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
     contributor = models.ForeignKey(Contributor, related_name="votes")
 
     class Meta:
-        ordering = ['ordinal']
+        order_with_respect_to = 'chapter'
 
 
 class PrewritingVote(TimeStampedModel):

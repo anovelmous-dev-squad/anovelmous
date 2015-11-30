@@ -1,6 +1,7 @@
 import graphene
 from graphene import resolve_only_args, relay
 from graphene.contrib.django import DjangoNode
+from graphql_relay.node.node import from_global_id
 
 from . import models
 from datetime import datetime
@@ -154,7 +155,6 @@ class Query(graphene.ObjectType):
     vocabulary = relay.ConnectionField(VocabTerm)
     novels = relay.ConnectionField(Novel)
     chapters = relay.ConnectionField(Chapter)
-    tokens = relay.ConnectionField(Token)
     votes = relay.ConnectionField(Vote)
     stages = relay.ConnectionField(Stage)
     plots = relay.ConnectionField(Plot)
@@ -166,7 +166,6 @@ class Query(graphene.ObjectType):
     vocab_term = relay.NodeField(VocabTerm)
     novel = relay.NodeField(Novel)
     chapter = relay.NodeField(Chapter)
-    token = relay.NodeField(Token)
     vote = relay.NodeField(Vote)
     stage = relay.NodeField(Stage)
     plot = relay.NodeField(Plot)
@@ -223,7 +222,52 @@ class Query(graphene.ObjectType):
     def resolve_viewer(self, *args, **kwargs):
         return self
 
+
+class CastVote(relay.ClientIDMutation):
+    class Input:
+        resource_id = graphene.String(required=True)
+        chapter_id = graphene.String(required=True)
+        ordinal = graphene.Int(required=True)
+        contributor_id = graphene.String(required=True)
+
+    vote = graphene.Field(Vote)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        resource_id = input.get('resource_id')
+        chapter_id = input.get('chapter_id')
+        ordinal = input.get('ordinal')
+        contributor_id = input.get('contributor_id')
+
+        res_global = from_global_id(resource_id)
+        res_global_type = res_global.type
+        resource, relation_name = None, None
+        if (res_global_type == 'VocabTerm'):
+            relation_name = 'token'
+            resource = models.Token.objects.get(id=res_global.id)
+        elif (res_global_type == 'Place'):
+            relation_name = 'place'
+            resource = models.Place.objects.get(id=res_global.id)
+        elif (res_global_type == 'Character'):
+            relation_name = 'character'
+            resource = models.Character.objects.get(id=res_global.id)
+        elif (res_global_type == 'PlotItem'):
+            relation_name = 'plot_item'
+            resource = models.PlotItem.objects.get(id=res_global.id)
+
+        chapter = models.Chapter.objects.get(id=from_global_id(chapter_id).id)
+        contributor = models.Contributor.objects.get(id=from_global_id(contributor_id).id)
+        createArgs = {'ordinal': ordinal, 'chapter': chapter, 'contributor': contributor}
+        createArgs[relation_name] = resource
+
+        return models.Vote.objects.create(**createArgs)
+
+
+class Mutation(graphene.ObjectType):
+    cast_vote = graphene.Field(CastVote)
+
 schema.query = Query
+schema.mutation = Mutation
 
 
 import json
