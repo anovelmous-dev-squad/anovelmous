@@ -231,6 +231,7 @@ class CastVote(relay.ClientIDMutation):
         contributor_id = graphene.String(required=True)
 
     vote = graphene.Field(Vote)
+    contributor = graphene.Field(Contributor)
 
     @classmethod
     def mutate_and_get_payload(cls, input, info):
@@ -261,7 +262,7 @@ class CastVote(relay.ClientIDMutation):
         createArgs[relation_name] = resource
 
         vote = models.Vote.objects.create(**createArgs)
-        return CastVote(vote=vote)
+        return CastVote(vote=vote, contributor=contributor)
 
 
 class CreatePlot(relay.ClientIDMutation):
