@@ -74,7 +74,10 @@ class Character(PrewritingItem):
     bio = models.CharField(max_length=1500)
 
     def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        if self.last_name != '':
+            return '{} {}'.format(self.first_name, self.last_name)
+        else:
+            return self.first_name
 
 
 class Place(PrewritingItem):
@@ -168,7 +171,10 @@ class NovelToken(AbstractNovelToken):
     """
     A token tied to a Novel's chapter.
     """
-    token = models.ForeignKey(Token)
+    token = models.ForeignKey(Token, null=True, blank=True)
+    place = models.ForeignKey(Place, null=True, blank=True)
+    character = models.ForeignKey(Character, null=True, blank=True)
+    plot_item = models.ForeignKey(PlotItem, null=True, blank=True)
     chapter = models.ForeignKey(Chapter, related_name="tokens")
 
     class Meta:
@@ -193,7 +199,7 @@ class NovelToken(AbstractNovelToken):
         if new_token:
             FormattedNovelToken.objects.create(
                 content=new_token,
-                ordinal=prev_formatted_novel_token.ordinal+1 if prev_formatted_novel_token else 0,
+                ordinal=prev_formatted_novel_token.ordinal + 1 if prev_formatted_novel_token else 0,
                 chapter=self.chapter
             )
 
@@ -202,7 +208,14 @@ class NovelToken(AbstractNovelToken):
         novel.save()
 
     def __str__(self):
-        return self.token.content
+        if self.token:
+            return str(self.token)
+        elif self.place:
+            return str(self.place)
+        elif self.character:
+            return str(self.character)
+        elif self.plot_item:
+            return str(self.plot_item)
 
 
 class FormattedNovelToken(AbstractNovelToken):
@@ -225,14 +238,20 @@ class Vote(TimeStampedModel):
     A model used to cast a vote for a new NovelToken. The most popular vote during the voting window will determine the
     next NovelToken.
     """
-    token = models.ForeignKey(Token)
+    token = models.ForeignKey(Token, null=True, blank=True)
+    place = models.ForeignKey(Place, null=True, blank=True)
+    character = models.ForeignKey(Character, null=True, blank=True)
+    plot_item = models.ForeignKey(PlotItem, null=True, blank=True)
     ordinal = models.IntegerField()
     selected = models.BooleanField(default=False)
     chapter = models.ForeignKey(Chapter)
     contributor = models.ForeignKey(Contributor, related_name="votes")
 
     class Meta:
-        ordering = ['ordinal']
+        order_with_respect_to = 'chapter'
+
+    def __str__(self):
+        return '{}: {} - {}'.format(self.chapter, self.ordinal, self.selected)
 
 
 class PrewritingVote(TimeStampedModel):
