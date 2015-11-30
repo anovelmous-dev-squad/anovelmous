@@ -324,10 +324,40 @@ class CreatePlace(relay.ClientIDMutation):
         return CreatePlace(place=place)
 
 
+class CreatePlotItem(relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+        description = graphene.String(required=True)
+        novel_id = graphene.String(required=True)
+        contributor_id = graphene.String(required=True)
+
+    plot_item = graphene.Field(PlotItem)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        name = input.get('name')
+        description = input.get('description')
+        novel_id = input.get('novel_id')
+        contributor_id = input.get('contributor_id')
+
+        contributor = models.Contributor.objects.get(id=from_global_id(contributor_id).id)
+        novel = models.Novel.objects.get(id=from_global_id(novel_id).id)
+
+        plot_item = models.PlotItem.objects.create(
+            name=name,
+            description=description,
+            novel=novel,
+            contributor=contributor
+        )
+
+        return CreatePlotItem(plot_item=plot_item)
+
+
 class Mutation(graphene.ObjectType):
     cast_vote = graphene.Field(CastVote)
     create_character = graphene.Field(CreateCharacter)
     create_place = graphene.Field(CreatePlace)
+    create_plot_item = graphene.Field(CreatePlotItem)
 
 schema.query = Query
 schema.mutation = Mutation
