@@ -2,6 +2,7 @@ import graphene
 from graphene import resolve_only_args, relay
 from graphene.contrib.django import DjangoNode
 from graphql_relay.node.node import from_global_id
+#from graphql_relay.connection.arrayconnection import cursor_for_object_in_connection
 
 from . import models
 from datetime import datetime
@@ -233,6 +234,7 @@ class CastVote(relay.ClientIDMutation):
 
     vote = graphene.Field(Vote)
     contributor = graphene.Field(Contributor)
+    new_vote_edge = relay.ConnectionField(Vote)
 
     @classmethod
     def mutate_and_get_payload(cls, input, info):
@@ -264,6 +266,9 @@ class CastVote(relay.ClientIDMutation):
 
         vote = models.Vote.objects.create(**createArgs)
         return CastVote(vote=vote, contributor=contributor)
+
+    def resolve_new_vote_edge(self, args, info):
+        return [self.vote]
 
 
 class CreatePlot(relay.ClientIDMutation):
