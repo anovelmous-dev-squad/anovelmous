@@ -101,29 +101,88 @@ class Stage(DjangoNode):
 
 
 class Plot(DjangoNode):
+    vote_score = graphene.Int()
+
     class Meta:
         model = models.Plot
+
+    def resolve_votes(self, args, info):
+        return self.instance.votes.all()
+
+    def resolve_vote_score(self, args, info):
+        return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
 
     connection_type = Connection
 
 
 class Place(DjangoNode):
+    vote_score = graphene.Int()
+
     class Meta:
         model = models.Place
+
+    def resolve_votes(self, args, info):
+        return self.instance.votes.all()
+
+    def resolve_vote_score(self, args, info):
+        return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
 
     connection_type = Connection
 
 
 class PlotItem(DjangoNode):
+    vote_score = graphene.Int()
+
     class Meta:
         model = models.PlotItem
+
+    def resolve_votes(self, args, info):
+        return self.instance.votes.all()
+
+    def resolve_vote_score(self, args, info):
+        return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
 
     connection_type = Connection
 
 
 class Character(DjangoNode):
+    vote_score = graphene.Int()
+
     class Meta:
         model = models.Character
+
+    def resolve_votes(self, args, info):
+        return self.instance.votes.all()
+
+    def resolve_vote_score(self, args, info):
+        return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
+
+    connection_type = Connection
+
+
+class PlotVote(DjangoNode):
+    class Meta:
+        model = models.PlotVote
+
+    connection_type = Connection
+
+class CharacterVote(DjangoNode):
+    class Meta:
+        model = models.CharacterVote
+
+    connection_type = Connection
+
+
+class PlaceVote(DjangoNode):
+    class Meta:
+        model = models.PlaceVote
+
+    connection_type = Connection
+
+
+class PlotItemVote(DjangoNode):
+    class Meta:
+        model = models.PlotItemVote
 
     connection_type = Connection
 
@@ -174,6 +233,10 @@ class Query(graphene.ObjectType):
     place = relay.NodeField(Place)
     plot_item = relay.NodeField(PlotItem)
     character = relay.NodeField(Character)
+    plot_vote = relay.NodeField(PlotVote)
+    character_vote = relay.NodeField(CharacterVote)
+    place_vote = relay.NodeField(PlaceVote)
+    plot_item_vote = relay.NodeField(PlotItemVote)
     node = relay.NodeField()
     viewer = graphene.Field('self')
 

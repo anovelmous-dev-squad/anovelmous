@@ -263,16 +263,16 @@ class PrewritingVote(TimeStampedModel):
 
 
 class PlotVote(PrewritingVote):
-    plot = models.ForeignKey(Plot)
+    plot = models.ForeignKey(Plot, related_name="votes")
 
 
 class CharacterVote(PrewritingVote):
-    character = models.ForeignKey(Character)
+    character = models.ForeignKey(Character, related_name="votes")
 
 
 class PlaceVote(PrewritingVote):
-    place = models.ForeignKey(Place)
+    place = models.ForeignKey(Place, related_name="votes")
 
 
 class PlotItemVote(PrewritingVote):
-    plot_item = models.ForeignKey(PlotItem)
+    plot_item = models.ForeignKey(PlotItem, related_name="votes")
