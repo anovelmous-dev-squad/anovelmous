@@ -8,15 +8,15 @@ Anonymous + Novel. Write together as a community to create a collective narrativ
 ## Concept
 
  - Strangers create a narrative, word-by-word
- 
+
  - Every 10 seconds, contributors vote with an allowed vocabulary for the next word
- 
+
  - Grammar checker enforces readability
 
 Constraints create interesting and creative situations.
- 
+
 Constraints are a way to game-ify some aspect of communication.
- 
+
  - Messages... with 140 character limits = Twitter
  - Photos... purposefully, permanently deleted = Snapchat
  - Videos... limited to 7 seconds = Vine
@@ -65,8 +65,11 @@ For example: (this app uses postgres)
 
 Now, it's just typical django application setup:
 
-    python manage.py syncdb
     python manage.py migrate
+
+If you don't have nltk data on your local machine already:
+
+    python -c "import nltk; nltk.download()"
 
 Create a superuser
 
