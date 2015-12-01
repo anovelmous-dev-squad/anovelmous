@@ -85,6 +85,11 @@ You should now be able to run the app locally for testing and development!
     python manage.py runserver
 
 
+If you think you've added any great fixture data, make sure to update the fixture data file: **datadump.json**
+
+    python manage.py dumpdata api --output=api/fixtures/datadump.json
+
+
 #### NLTK Issues
 
 You may not have NLTK data installed on your system.
