@@ -256,7 +256,7 @@ class Vote(TimeStampedModel):
 
 class PrewritingVote(TimeStampedModel):
     score = models.SmallIntegerField()
-    contributor = models.ForeignKey(Contributor)
+    contributor = models.ForeignKey(Contributor, related_name="%(class)ss")
 
     class Meta:
         abstract = True

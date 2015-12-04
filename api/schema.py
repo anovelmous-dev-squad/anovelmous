@@ -100,8 +100,17 @@ class Stage(DjangoNode):
     connection_type = Connection
 
 
+def get_vote(instance, args):
+    if not args.get('contributor_id'):
+        return None
+    contributor_id = from_global_id(args.get('contributor_id')).id
+    votes = instance.votes.filter(contributor__id=contributor_id)
+    return votes.first() if votes else None
+
+
 class Plot(DjangoNode):
     vote_score = graphene.Int()
+    vote = graphene.Field('PlotVote', contributor_id=graphene.String())
 
     class Meta:
         model = models.Plot
@@ -112,11 +121,15 @@ class Plot(DjangoNode):
     def resolve_vote_score(self, args, info):
         return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
 
+    def resolve_vote(self, args, info):
+        return get_vote(self.instance, args)
+
     connection_type = Connection
 
 
 class Place(DjangoNode):
     vote_score = graphene.Int()
+    vote = graphene.Field('PlaceVote', contributor_id=graphene.String())
 
     class Meta:
         model = models.Place
@@ -127,11 +140,15 @@ class Place(DjangoNode):
     def resolve_vote_score(self, args, info):
         return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
 
+    def resolve_vote(self, args, info):
+        return get_vote(self.instance, args)
+
     connection_type = Connection
 
 
 class PlotItem(DjangoNode):
     vote_score = graphene.Int()
+    vote = graphene.Field('PlotItemVote', contributor_id=graphene.String())
 
     class Meta:
         model = models.PlotItem
@@ -142,11 +159,15 @@ class PlotItem(DjangoNode):
     def resolve_vote_score(self, args, info):
         return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
 
+    def resolve_vote(self, args, info):
+        return get_vote(self.instance, args)
+
     connection_type = Connection
 
 
 class Character(DjangoNode):
     vote_score = graphene.Int()
+    vote = graphene.Field('CharacterVote', contributor_id=graphene.String())
 
     class Meta:
         model = models.Character
@@ -156,6 +177,9 @@ class Character(DjangoNode):
 
     def resolve_vote_score(self, args, info):
         return self.instance.votes.filter(score=1).count() - self.instance.votes.filter(score=-1).count()
+
+    def resolve_vote(self, args, info):
+        return get_vote(self.instance, args)
 
     connection_type = Connection
 
@@ -203,6 +227,18 @@ class Contributor(DjangoNode):
 
     def resolve_characters(self, *args):
         return self.instance.characters.all()
+
+    def resolve_plotvotes(self, *args):
+        return self.instance.plotvotes.all()
+
+    def resolve_charactervotes(self, *args):
+        return self.instance.charactervotes.all()
+
+    def resolve_placevotes(self, *args):
+        return self.instance.placevotes.all()
+
+    def resolve_plotitemvotes(self, *args):
+        return self.instance.plotitemvotes.all()
 
 
     class Meta:
