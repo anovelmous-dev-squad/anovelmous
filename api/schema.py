@@ -450,12 +450,58 @@ class CreatePlotItem(relay.ClientIDMutation):
         return CreatePlotItem(plot_item=plot_item)
 
 
+class UpdateVoteScore(relay.ClientIDMutation):
+    class Input:
+        resource_id = graphene.String()
+        contributor_id = graphene.String()
+        addend = graphene.Int()
+
+    newScore = graphene.Int()
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        resource_id = input.get('resource_id')
+        contributor_id = input.get('contributor_id')
+        addend = input.get('addend')
+
+        res_global = from_global_id(resource_id)
+        res_global_type = res_global.type
+        resource, relation_name = None, None
+        if (res_global_type == 'Plot'):
+            relation_name = 'plot'
+            resource = models.Plot.objects.get(id=res_global.id)
+            res_vote_model = models.PlotVote
+        elif (res_global_type == 'Place'):
+            relation_name = 'place'
+            resource = models.Place.objects.get(id=res_global.id)
+            res_vote_model = models.PlaceVote
+        elif (res_global_type == 'Character'):
+            relation_name = 'character'
+            resource = models.Character.objects.get(id=res_global.id)
+            res_vote_model = models.CharacterVote
+        elif (res_global_type == 'PlotItem'):
+            relation_name = 'plot_item'
+            resource = models.PlotItem.objects.get(id=res_global.id)
+            res_vote_model = models.PlotItemVote
+
+        contributor = models.Contributor.objects.get(id=from_global_id(contributor_id).id)
+        create_args = {'contributor': contributor}
+        create_args[relation_name] = resource
+        updated_values = {'score': addend}
+
+        res_vote_model.objects.update_or_create(defaults=updated_values, **create_args)
+        newScore = resource.votes.filter(score=1).count() - resource.votes.filter(score=-1).count()
+
+        return UpdateVoteScore(newScore=newScore)
+
+
 class Mutation(graphene.ObjectType):
     cast_vote = graphene.Field(CastVote)
     create_plot = graphene.Field(CreatePlot)
     create_character = graphene.Field(CreateCharacter)
     create_place = graphene.Field(CreatePlace)
     create_plot_item = graphene.Field(CreatePlotItem)
+    update_vote_score = graphene.Field(UpdateVoteScore)
 
 schema.query = Query
 schema.mutation = Mutation

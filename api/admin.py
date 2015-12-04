@@ -12,7 +12,11 @@ from .models import (
     Plot,
     Place,
     PlotItem,
-    Character
+    Character,
+    PlotVote,
+    CharacterVote,
+    PlaceVote,
+    PlotItemVote
 )
 
 admin.site.register(Novel)
@@ -28,3 +32,7 @@ admin.site.register(Plot)
 admin.site.register(Place)
 admin.site.register(PlotItem)
 admin.site.register(Character)
+admin.site.register(PlotVote)
+admin.site.register(CharacterVote)
+admin.site.register(PlaceVote)
+admin.site.register(PlotItemVote)
