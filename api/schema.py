@@ -89,7 +89,6 @@ class Novel(DjangoNode):
         latest_chapter = self.instance.chapters.last()
         most_recent_token = latest_chapter.tokens.last()
         tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_token))
-        print(tokens)
         return models.Token.objects.filter(content__in=tokens)
 
     class Meta:
