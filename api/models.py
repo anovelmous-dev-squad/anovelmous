@@ -251,7 +251,16 @@ class Vote(TimeStampedModel):
         order_with_respect_to = 'chapter'
 
     def __str__(self):
-        return '{}: {} - {}'.format(self.chapter, self.ordinal, self.selected)
+        token = None
+        if self.token:
+            token = self.token
+        elif self.place:
+            token = self.place
+        elif self.character:
+            token = self.character
+        elif self.plot_item:
+            token = self.plot_item
+        return '<Token: {}, Chapter: {}, ordinal: {}, selected: {}'.format(token, self.chapter, self.ordinal, self.selected)
 
 
 class PrewritingVote(TimeStampedModel):

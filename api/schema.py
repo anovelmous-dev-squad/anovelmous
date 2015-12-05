@@ -35,7 +35,8 @@ class Chapter(DjangoNode):
     tokens = relay.ConnectionField(Token)
 
     def resolve_text(self, *args):
-        return ' '.join(models.FormattedNovelToken.objects.filter(chapter=self.instance).values_list('content', flat=True))
+        return ' '.join(models.FormattedNovelToken.objects.filter(chapter=self.instance)
+                    .order_by('ordinal').values_list('content', flat=True))
 
     def resolve_tokens(self, *args):
         return self.instance.tokens.all()
