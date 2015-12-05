@@ -2,7 +2,7 @@ import graphene
 from graphene import resolve_only_args, relay
 from graphene.contrib.django import DjangoNode
 from graphql_relay.node.node import from_global_id
-#from graphql_relay.connection.arrayconnection import cursor_for_object_in_connection
+from django.core.cache import cache
 
 from . import models
 from datetime import datetime
@@ -50,6 +50,7 @@ class Chapter(DjangoNode):
 class Novel(DjangoNode):
     latest_chapter = graphene.Field(Chapter)
     vocabulary = relay.ConnectionField(VocabTerm)
+    filtered_vocabulary = relay.ConnectionField(VocabTerm)
 
     def resolve_vocabulary(self, *args):
         return models.Token.objects.all() # Eventually add filter based on Novel
@@ -80,6 +81,16 @@ class Novel(DjangoNode):
 
     def resolve_proposed_plotitems(self, *args):
         return self.instance.proposed_plotitems.all()
+
+    def resolve_filtered_vocabulary(self, *args):
+        if self.instance.stage.name != 'WRITING':
+            return []
+        gf = cache.get('grammar_filter')
+        latest_chapter = self.instance.chapters.last()
+        most_recent_token = latest_chapter.tokens.last()
+        tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_token))
+        print(tokens)
+        return models.Token.objects.filter(content__in=tokens)
 
     class Meta:
         model = models.Novel
