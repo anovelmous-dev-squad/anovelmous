@@ -87,8 +87,9 @@ class Novel(DjangoNode):
             return []
         gf = cache.get('grammar_filter')
         latest_chapter = self.instance.chapters.last()
-        most_recent_token = latest_chapter.tokens.last()
-        tokens = gf.get_grammatically_correct_vocabulary_subset(str(most_recent_token))
+        last_tokens = latest_chapter.tokens.order_by('-ordinal')[:3][::-1]
+        last_tokens_text = ' '.join([t.token.content for t in last_tokens])
+        tokens = gf.get_grammatically_correct_vocabulary_subset(last_tokens_text)
         return models.Token.objects.filter(content__in=tokens)
 
     class Meta:
