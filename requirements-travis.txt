@@ -24,7 +24,6 @@ py==1.4.30
 pytest-django==2.8.0
 PyYAML==3.11
 requests==2.7.0
-scipy==0.16.1
 singledispatch==3.4.0.3
 six==1.10.0
 whitenoise==1.0.6
