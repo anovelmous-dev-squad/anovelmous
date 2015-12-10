@@ -19,7 +19,7 @@ before_install:
 - sudo apt-get install gfortran
 
 install:
-- pip install -r requirements-travis.txt
+- travis_wait pip install -r requirements-travis.txt
 - sudo cp -R nltk_data /usr/share/nltk_data
 
 before_script:
